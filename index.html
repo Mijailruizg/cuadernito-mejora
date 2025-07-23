@@ -18,7 +18,7 @@
       background-size: cover;
       background-position: center top;
       background-repeat: no-repeat;
-      background-attachment: scroll; 
+      background-attachment: fixed;
       min-height: 100vh;
       color: #2e3d49;
     }
@@ -91,6 +91,11 @@
     .row button {
       width: 50%;
     }
+    
+    img {
+  max-width: 100%;
+  height: auto;
+}
 
     #pantalla-inicio {
       min-height: 100vh;
@@ -224,50 +229,60 @@
       font-weight: 600;
       border-radius: 6px;
     }
-@media (max-width: 768px) {
-  body {
-    font-size: 16px;
-  }
 
-  h1, h2 {
-    font-size: 1.5rem;
-    text-align: center;
-  }
+  @media (max-width: 768px) {
+    body {
+      font-size: 16px;
+      background-attachment: scroll;
+      background-size: cover;
+      background-position: center top;
+      min-height: 100vh;
+    }
 
-  .container {
-    margin: 15px 10px;
-    padding: 15px;
-    font-size: 1rem;
-  }
+    h1, h2 {
+      font-size: 1.3rem;
+      text-align: center;
+    }
 
-  .row {
-    flex-direction: column;
-    gap: 10px;
-  }
+    .container {
+      margin: 10px 2vw;
+      padding: 10px 4vw;
+      font-size: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+    }
 
-  input, select, button {
-    font-size: 1rem;
-    width: 100%;
-  }
+    .row {
+      flex-direction: column;
+      gap: 10px;
+    }
 
-  .floating-rubro-btn {
-    width: 48px;
-    height: 48px;
-    font-size: 22px;
-    bottom: 15px;
-    right: 15px;
-  }
+    input, select, button {
+      font-size: 1rem;
+      width: 100%;
+    }
 
-  .rubro-menu {
-    width: 95%;
-    right: 2.5%;
-    padding: 15px;
-  }
+    .floating-rubro-btn {
+      width: 44px;
+      height: 44px;
+      font-size: 20px;
+      bottom: 12px;
+      right: 12px;
+    }
 
-  .manual-selector label {
-    font-size: 1rem;
+    .rubro-menu {
+      width: 98vw;
+      left: 1vw !important;
+      right: 1vw !important;
+      padding: 10px;
+      top: 70px !important;
+      border-radius: 10px;
+    }
+
+    .manual-selector label {
+      font-size: 1rem;
+    }
   }
-}
 
   </style>
 
@@ -307,7 +322,7 @@
 </div>
 
 <!-- Burbuja flotante para edición rápida de stock -->
-<button class="floating-rubro-btn" id="stockQuickBtn" style="top: 40px; left: 20px; background-color: #004d40; color: #004d40; font-size: 22px;" onclick="toggleStockMenu()">≡</button>
+<button class="floating-rubro-btn" id="stockQuickBtn" style="top: 40px; left: 20px; background-color: #00796b; color: #004d40; font-size: 22px;" onclick="toggleStockMenu()">≡</button>
 <div class="rubro-menu" id="stockMenu" style="z-index:1001; left:90px; right:auto; top:30px;">
   <h3>Editar Stock Rápido</h3>
   <label for="stockRubro">Seleccionar rubro:</label>
@@ -340,7 +355,7 @@
 <div id="cuadernito" class="container">
   <h1 style="margin: 0;">Cuadernito Digital</h1>
   <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px;">
-  <img src="https://scontent.fsrz1-2.fna.fbcdn.net/v/t39.30808-6/310602604_168610305828090_4039213277414922555_n.png?_nc_cat=110&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=p_usD23-lJgQ7kNvwENIeGb&_nc_oc=AdkCmMTJZf-B6PggyJ7dlFYVTWTFnF-rsTNslhUqYkIfy3nYbFRuL0r4d7RIUwGcrfbsgbVD87kgQ8sF9iiz2kRh&_nc_zt=23&_nc_ht=scontent.fsrz1-2.fna&_nc_gid=aLCfRZKU1JZ0ovnGtiFjsg&oh=00_AfQaOiEPurEdbEvniiuWpDvyDT3cDIKhjFT0gi2BH3_zaA&oe=6886065A" alt="Logo"
+  <img src="https://unifranz.edu.bo/wp-content/themes/unifranz/dist/images/logo_583717f4.png "" alt="Logo"
   style="height: 58px; width: 58px; object-fit: cover; border-radius: 50%; border: 2px solid #00796b; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
 </div>
     
@@ -369,18 +384,23 @@
 
 
 <label for="producto">Buscar o seleccionar producto:</label>
-<input list="listaProductos" id="producto" placeholder="Buscar producto o Selecciona" 
-       oninput="filtrarProductos()" onchange="actualizarStockDesdeInput()">
-<datalist id="listaProductos">
-  <!-- Opciones se llenan dinámicamente -->
-</datalist>
+<input list="listaProductos" id="producto" placeholder="Buscar producto o selecciona" autocomplete="off">
+<datalist id="listaProductos"></datalist>
 <div id="stockProductoInfo" style="margin-bottom:10px;color:#00796b;font-weight:bold;"></div>
 
 <label for="cantidad">Cantidad Del Producto:</label>
 <input type="number" id="cantidad" placeholder="Cantidad" min="1" step="1">
 
+
     <label for="monto">Precio Del Producto (Bs):</label>
     <input type="number" id="monto" placeholder="Monto (Bs)">
+
+    <label for="metodoPago">Método de Pago:</label>
+    <select id="metodoPago">
+      <option value="">-- Selecciona método de pago --</option>
+      <option value="Efectivo">Efectivo</option>
+      <option value="QR">QR</option>
+    </select>
 
 
 
@@ -434,24 +454,21 @@
       "Productos Personalizados y Artesanías": ["Tazas personalizadas", "Camisas sublimadas", "Mousepads personalizados", "Cojines personalizados", "Cuadros personalizados", "Jarrones personalizados", "Almohadas decorativas personalizadas", "Regalos personalizados para empresas", "Camisetas con diseño personalizado", "Llaveros personalizados"]
     };
 
+// Cargar stockPorProducto desde localStorage o inicializarlo vacío
+let stockPorProducto = JSON.parse(localStorage.getItem('stockPorProducto')) || {};
+
     // JavaScript
-// Función para actualizar los productos cuando cambia el rubro
+
+// Actualiza el datalist de productos según el rubro seleccionado
 function actualizarProductos() {
   const rubro = document.getElementById("rubro").value;
   const inputProducto = document.getElementById("producto");
   const datalist = document.getElementById("listaProductos");
-  
-  // Limpiar el input y el datalist
   inputProducto.value = '';
   datalist.innerHTML = '';
   document.getElementById('stockProductoInfo').textContent = '';
-  
   if (rubro && productosPorRubro[rubro]) {
-    // Ordenar productos alfabéticamente
-    const productosOrdenados = [...productosPorRubro[rubro]].sort();
-    
-    // Llenar el datalist con todos los productos del rubro
-    productosOrdenados.forEach(producto => {
+    productosPorRubro[rubro].forEach(producto => {
       const option = document.createElement("option");
       option.value = producto;
       datalist.appendChild(option);
@@ -459,73 +476,33 @@ function actualizarProductos() {
   }
 }
 
-// Función para filtrar productos mientras se escribe
-function filtrarProductos() {
-  const rubro = document.getElementById("rubro").value;
-  const inputProducto = document.getElementById("producto");
-  const textoBusqueda = inputProducto.value.toLowerCase();
-  const datalist = document.getElementById("listaProductos");
-  
-  if (!rubro) {
-    alert("Primero selecciona un rubro");
-    inputProducto.value = '';
-    return;
-  }
 
-  // Limpiar el datalist
-  datalist.innerHTML = '';
-  
-  // Filtrar productos que coincidan con la búsqueda
-  const productosFiltrados = productosPorRubro[rubro].filter(producto => 
-    producto.toLowerCase().includes(textoBusqueda)
-  );
 
-  // Llenar el datalist con los productos filtrados
-  productosFiltrados.forEach(producto => {
-    const option = document.createElement("option");
-    option.value = producto;
-    datalist.appendChild(option);
-  });
-}
 
-// Función para actualizar el stock cuando se selecciona un producto
-function actualizarStockDesdeInput() {
-  const rubro = document.getElementById('rubro').value;
-  const producto = document.getElementById('producto').value;
-  const infoDiv = document.getElementById('stockProductoInfo');
-  
-  if (rubro && producto && productosPorRubro[rubro]?.includes(producto)) {
-    const key = rubro + '||' + producto;
-    const stock = stockPorProducto[key] !== undefined ? stockPorProducto[key] : 0;
-    infoDiv.textContent = `Stock actual: ${stock}`;
-  } else {
-    infoDiv.textContent = '';
-    // Si el producto no existe, limpiar el campo
-    if (producto && !productosPorRubro[rubro]?.includes(producto)) {
-      document.getElementById('producto').value = '';
-    }
-  }
-}
 
-// Inicialización (llamar al cargar la página)
+
+// Inicialización al cargar la página
 window.addEventListener('DOMContentLoaded', () => {
   // Llenar el selector de rubros
   const rubroSelect = document.getElementById('rubro');
+  rubroSelect.innerHTML = '<option value="">-- Selecciona un rubro --</option>';
   for (const rubro in productosPorRubro) {
     const option = document.createElement('option');
     option.value = rubro;
     option.textContent = rubro;
     rubroSelect.appendChild(option);
   }
+  // Evento para mostrar stock al cambiar producto
+  document.getElementById('producto').addEventListener('input', mostrarStockProductoSeleccionado);
 });
 
-// Función para mostrar el stock del producto seleccionado
+
+// Muestra el stock del producto seleccionado
 function mostrarStockProductoSeleccionado() {
   const rubro = document.getElementById('rubro').value;
   const producto = document.getElementById('producto').value;
   const infoDiv = document.getElementById('stockProductoInfo');
-  
-  if (rubro && producto) {
+  if (rubro && producto && productosPorRubro[rubro]?.includes(producto)) {
     const key = rubro + '||' + producto;
     const stock = stockPorProducto[key] !== undefined ? stockPorProducto[key] : 0;
     infoDiv.textContent = `Stock actual: ${stock}`;
@@ -534,37 +511,61 @@ function mostrarStockProductoSeleccionado() {
   }
 }
 
-// Evento para filtrar productos mientras se escribe
+// Mostrar todos los productos del rubro seleccionado al enfocar el input
+document.getElementById("producto").addEventListener("focus", function() {
+  const rubro = document.getElementById("rubro").value;
+  const datalist = document.getElementById("listaProductos");
+  datalist.innerHTML = '';
+  if (rubro && productosPorRubro[rubro]) {
+    productosPorRubro[rubro].forEach(producto => {
+      const option = document.createElement("option");
+      option.value = producto;
+      datalist.appendChild(option);
+    });
+  }
+  // Mostrar el stock si ya hay un producto seleccionado
+  mostrarStockProductoSeleccionado();
+});
+
+// Evento para filtrar productos mientras se escribe o seleccionar
 document.getElementById("producto").addEventListener("input", function() {
   const rubro = document.getElementById("rubro").value;
   const textoBusqueda = this.value.toLowerCase();
   const datalist = document.getElementById("listaProductos");
-  
   if (!rubro) {
     alert("Primero selecciona un rubro");
     this.value = '';
+    document.getElementById('stockProductoInfo').textContent = '';
     return;
   }
-
-  // Mostrar todos los productos si no hay texto de búsqueda
+  // Si el campo está vacío, mostrar todos los productos
   if (!textoBusqueda) {
-    actualizarProductos();
+    datalist.innerHTML = '';
+    if (productosPorRubro[rubro]) {
+      productosPorRubro[rubro].forEach(producto => {
+        const option = document.createElement("option");
+        option.value = producto;
+        datalist.appendChild(option);
+      });
+    }
+    mostrarStockProductoSeleccionado();
     return;
   }
-
   // Filtrar productos que coincidan con la búsqueda
   const productosFiltrados = productosPorRubro[rubro].filter(producto => 
     producto.toLowerCase().includes(textoBusqueda)
   );
-
-  // Actualizar el datalist con los productos filtrados
   datalist.innerHTML = '';
   productosFiltrados.forEach(producto => {
     const option = document.createElement("option");
     option.value = producto;
     datalist.appendChild(option);
   });
+  mostrarStockProductoSeleccionado();
+});
 
+// Mostrar stock también al perder el foco (por si elige con mouse)
+document.getElementById("producto").addEventListener("change", function() {
   mostrarStockProductoSeleccionado();
 });
 
@@ -636,28 +637,45 @@ function actualizarProductos() {
   mostrarStockProductoSeleccionado();
 }
 
-    function mostrarStockActual() {
-      const rubro = document.getElementById('stockRubro').value;
-      const producto = document.getElementById('stockProducto').value;
-      const key = rubro + '||' + producto;
-      document.getElementById('stockActual').value = stockPorProducto[key] || 0;
-      document.getElementById('nuevoStock').value = '';
-    }
 
-    function guardarStock() {
-      const rubro = document.getElementById('stockRubro').value;
-      const producto = document.getElementById('stockProducto').value;
-      const nuevoStock = document.getElementById('nuevoStock').value;
-      if (!rubro || !producto || nuevoStock === '' || isNaN(nuevoStock) || Number(nuevoStock) < 0) {
-        alert('Selecciona rubro, producto y un stock válido');
-        return;
-      }
-      const key = rubro + '||' + producto;
-      stockPorProducto[key] = Number(nuevoStock);
-      localStorage.setItem('stockPorProducto', JSON.stringify(stockPorProducto));
-      document.getElementById('stockActual').value = nuevoStock;
-      alert('Stock actualizado');
-    }
+function mostrarStockActual() {
+  const rubro = document.getElementById('stockRubro').value;
+  const producto = document.getElementById('stockProducto').value;
+  const key = rubro + '||' + producto;
+  document.getElementById('stockActual').value = stockPorProducto[key] || 0;
+  document.getElementById('nuevoStock').value = '';
+
+  // Si el formulario principal tiene el mismo rubro y producto, actualizar el stock mostrado ahí también
+  const rubroPrincipal = document.getElementById('rubro').value;
+  const productoPrincipal = document.getElementById('producto').value;
+  if (rubro === rubroPrincipal && producto === productoPrincipal) {
+    mostrarStockProductoSeleccionado();
+  }
+}
+
+
+function guardarStock() {
+  const rubro = document.getElementById('stockRubro').value;
+  const producto = document.getElementById('stockProducto').value;
+  const nuevoStock = document.getElementById('nuevoStock').value;
+  if (!rubro || !producto || nuevoStock === '' || isNaN(nuevoStock) || Number(nuevoStock) < 0) {
+    alert('Selecciona rubro, producto y un stock válido');
+    return;
+  }
+  const key = rubro + '||' + producto;
+  stockPorProducto[key] = Number(nuevoStock);
+  localStorage.setItem('stockPorProducto', JSON.stringify(stockPorProducto));
+  document.getElementById('stockActual').value = nuevoStock;
+
+  // Si el formulario principal tiene el mismo rubro y producto, actualizar el stock mostrado ahí también
+  const rubroPrincipal = document.getElementById('rubro').value;
+  const productoPrincipal = document.getElementById('producto').value;
+  if (rubro === rubroPrincipal && producto === productoPrincipal) {
+    mostrarStockProductoSeleccionado();
+  }
+
+  alert('Stock actualizado');
+}
 
 function toggleStockMenu() {
   const menu = document.getElementById('stockMenu');
@@ -791,66 +809,77 @@ function actualizarSelectorPrincipalRubros() {
   }
 }
 
-    function registrarMovimiento() {
-      const tipo = document.getElementById("tipo").value;
-      const categoria = document.getElementById("categoria").value;
-      const rubro = document.getElementById("rubro").value;
-      const producto = document.getElementById("producto").value;
-      const cantidad = Number(document.getElementById("cantidad").value);
-      const monto = Number(document.getElementById("monto").value);
-      const fecha = document.getElementById("fecha").value;
+function registrarMovimiento() {
+  const tipo = document.getElementById("tipo").value;
+  const categoria = document.getElementById("categoria").value;
+  const rubro = document.getElementById("rubro").value;
+  const producto = document.getElementById("producto").value;
+  const cantidad = Number(document.getElementById("cantidad").value);
+  const monto = Number(document.getElementById("monto").value);
+  const fecha = document.getElementById("fecha").value;
+  const metodoPago = document.getElementById("metodoPago").value;
 
-      if (!tipo || !categoria || !rubro || !producto ||  !fecha) {
-        alert("Por favor, completa todos los campos correctamente");
-        return;
-      } else if (isNaN(cantidad) || isNaN(monto) || cantidad <= 0 || monto <= 0 ) {
-        alert("La cantidad y el monto deben ser mayores a 0.");
-       return;
-      }
+  // Validar que el producto exista en el rubro seleccionado
+  if (!tipo || !categoria || !rubro || !producto || !fecha || !metodoPago) {
+    alert("Por favor, completa todos los campos correctamente");
+    return;
+  } else if (!productosPorRubro[rubro] || !productosPorRubro[rubro].includes(producto)) {
+    alert("Selecciona un producto válido del rubro seleccionado");
+    return;
+  } else if (isNaN(cantidad) || isNaN(monto) || cantidad <= 0 || monto <= 0 ) {
+    alert("La cantidad y el monto deben ser mayores a 0.");
+    return;
+  }
 
-      // Obtener hora actual
-      const now = new Date();
-      const hora = now.toTimeString().slice(0,8); // HH:mm:ss
+  // Obtener hora actual
+  const now = new Date();
+  const hora = now.toTimeString().slice(0,8); // HH:mm:ss
 
-      const movimiento = {
-        tipo: tipo.toLowerCase(),
-        categoria,
-        rubro,
-        producto,
-        cantidad,
-        monto: (monto * cantidad).toFixed(2),
-        fecha,
-        hora
-      };
+  const movimiento = {
+    tipo: tipo.toLowerCase(),
+    categoria,
+    rubro,
+    producto,
+    cantidad,
+    monto: (monto * cantidad).toFixed(2),
+    fecha,
+    hora,
+    metodoPago
+  };
 
-      // Actualizar stock automáticamente SOLO si es una venta/gasto
-      const key = rubro + '||' + producto;
-      if (tipo.toLowerCase() === 'gasto' || categoria.toLowerCase() === 'venta') {
-        stockPorProducto[key] = (stockPorProducto[key] || 0) - cantidad;
-        if (stockPorProducto[key] < 0) stockPorProducto[key] = 0;
-        localStorage.setItem('stockPorProducto', JSON.stringify(stockPorProducto));
-      }
-      mostrarStockProductoSeleccionado();
+  // Actualizar stock automáticamente SOLO si es una venta/gasto
+  const key = rubro + '||' + producto;
+  if (tipo.toLowerCase() === 'gasto' || categoria.toLowerCase() === 'venta') {
+    stockPorProducto[key] = (stockPorProducto[key] || 0) - cantidad;
+    if (stockPorProducto[key] < 0) stockPorProducto[key] = 0;
+    localStorage.setItem('stockPorProducto', JSON.stringify(stockPorProducto));
+    mostrarStockProductoSeleccionado(); // Actualizar el stock mostrado tras registrar
+  } else {
+    mostrarStockProductoSeleccionado();
+  }
 
-      const tx = db.transaction(["movimientos"], "readwrite");
-      const store = tx.objectStore("movimientos");
-      store.add(movimiento);
+  const tx = db.transaction(["movimientos"], "readwrite");
+  const store = tx.objectStore("movimientos");
+  store.add(movimiento);
 
-      tx.oncomplete = function () {
-        alert("Movimiento registrado exitosamente.");
-        document.getElementById("tipo").value = "";
-        document.getElementById("categoria").value = "";
-        document.getElementById("rubro").value = "";
-        document.getElementById("producto").value = "";
-        document.getElementById("cantidad").value = "";
-        document.getElementById("monto").value = "";
-      };
+  tx.oncomplete = function () {
+    alert("Movimiento registrado exitosamente.");
+    document.getElementById("tipo").value = "";
+    document.getElementById("categoria").value = "";
+    document.getElementById("rubro").value = "";
+    document.getElementById("producto").value = "";
+    document.getElementById("cantidad").value = "";
+    document.getElementById("monto").value = "";
+    document.getElementById("metodoPago").value = "";
+    document.getElementById('stockProductoInfo').textContent = '';
+    document.getElementById('listaProductos').innerHTML = '';
+  };
 
-      tx.onerror = function (event) {
-        console.error("Error al registrar movimiento", event);
-        alert("Ocurrió un error al registrar el movimiento.");
-      };
-    }
+  tx.onerror = function (event) {
+    console.error("Error al registrar movimiento", event);
+    alert("Ocurrió un error al registrar el movimiento.");
+  };
+}
 
     function mostrarReporte(periodo) {
       const hoy = new Date();
@@ -929,9 +958,10 @@ function actualizarSelectorPrincipalRubros() {
         const cursor = event.target.result;
         if (cursor) {
           const d = cursor.value;
-          const li = document.createElement("li");
-          li.innerText = `${d.fecha} - ${d.tipo.toUpperCase()} Bs ${d.monto} (${d.producto}) - ${d.categoria}`;
-          lista.appendChild(li);
+      const metodo = d.metodoPago ? ` - ${d.metodoPago}` : '';
+      const li = document.createElement("li");
+      li.innerText = `${d.fecha} - ${d.tipo.toUpperCase()} Bs ${d.monto} (${d.producto}) - ${d.categoria}${metodo}`;
+      lista.appendChild(li);
           cursor.continue();
         }
       };
@@ -979,6 +1009,7 @@ async function exportarGestorAPdf() {
     doc.text('Tipo', 60, 30);
     doc.text('Categoría', 100, 30);
     doc.text('Producto', 160, 30);
+    doc.text('Método', 210, 30);
     doc.text('Monto (Bs)', 260, 30, { align: 'right' });
 
     doc.setFont(undefined, 'normal');
@@ -1002,6 +1033,8 @@ async function exportarGestorAPdf() {
         const tipo = mov.tipo ? mov.tipo.charAt(0).toUpperCase() + mov.tipo.slice(1) : 'Sin tipo';
         const categoria = mov.categoria || 'Sin categoría';
         const producto = mov.producto || 'Sin producto';
+
+        const metodo = mov.metodoPago || '-';
         const monto = isNaN(mov.monto) ? 0 : parseFloat(mov.monto);
 
         doc.text(fecha, 15, y);
@@ -1009,6 +1042,7 @@ async function exportarGestorAPdf() {
         doc.text(tipo, 60, y);
         doc.text(categoria, 100, y);
         doc.text(producto, 160, y);
+        doc.text(metodo, 210, y);
         doc.text(monto.toFixed(2), 260, y, { align: 'right' });
 
         if (mov.tipo && mov.tipo.toLowerCase() === 'ingreso') {
