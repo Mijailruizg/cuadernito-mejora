@@ -1,0 +1,1059 @@
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cuadernito Digital</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-image: url('https://i.pinimg.com/originals/0d/76/e4/0d76e404f8446398414a143f05076084.jpg');
+      background-size: cover;
+      background-position: center top;
+      background-repeat: no-repeat;
+      background-attachment: scroll; 
+      min-height: 100vh;
+      color: #2e3d49;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 40px auto;
+      background: rgba(255, 255, 255, 0.97);
+      padding: 30px 40px;
+      border-radius: 20px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #00796b;
+      margin-bottom: 25px;
+      font-weight: 600;
+    }
+
+    label {
+      font-weight: 500;
+      margin-top: 15px;
+      display: block;
+    }
+
+    input, select {
+      margin-top: 8px;
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid #b2dfdb;
+      border-radius: 10px;
+      font-size: 16px;
+      background-color: #f9fdfa;
+      transition: border-color 0.3s ease;
+    }
+
+    input:focus, select:focus {
+      border-color: #26a69a;
+      outline: none;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin-top: 15px;
+      font-size: 16px;
+      font-weight: 600;
+      background-color: #00796b;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #004d40;
+      transform: scale(1.02);
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    .row button {
+      width: 50%;
+    }
+
+    #pantalla-inicio {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(4px);
+    }
+
+    #cuadernito {
+      display: none;
+    }
+
+    #reporte, #gestor {
+      margin-top: 25px;
+      padding: 20px;
+      border-radius: 12px;
+    }
+
+    #reporte {
+      background-color: #e0f2f1;
+      border-left: 6px solid #00796b;
+      color: #004d40;
+    }
+
+    #gestor {
+      background-color: #fff8e1;
+      border-left: 6px solid #ffb300;
+      color: #ff6f00;
+    }
+
+    #gestor ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 10px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    #gestor ul li {
+      padding: 10px;
+      border-bottom: 1px dashed #ffcc80;
+    }
+
+    .marca-agua {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      color: rgba(0, 77, 64, 0.12);
+      user-select: none;
+      pointer-events: none;
+      z-index: 9999;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .floating-rubro-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #00796b;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 56px;
+      height: 56px;
+      font-size: 28px;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+      transition: transform 0.2s ease;
+    }
+
+    .floating-rubro-btn:hover {
+      background-color: #004d40;
+      transform: scale(1.1);
+    }
+
+    .rubro-menu {
+      position: fixed;
+      top: 90px;
+      right: 20px;
+      width: 300px;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+      z-index: 1000;
+      display: none;
+    }
+
+    .rubro-menu h3 {
+      margin-top: 0;
+      font-weight: 600;
+      color: #00796b;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    .rubro-menu input, .rubro-menu select {
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      width: 100%;
+    }
+
+    .rubro-menu button {
+      margin-top: 6px;
+      background-color: #004d40;
+    }
+
+    .manual-selector {
+      margin-top: 30px;
+      border-top: 1px solid #ccc;
+      padding-top: 20px;
+    }
+
+    .manual-selector label {
+      margin-bottom: 8px;
+      display: block;
+      font-weight: 500;
+    }
+
+    .manual-selector select {
+      background-color: #e8f5e9;
+      font-weight: 600;
+      border-radius: 6px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        margin: 20px 15px;
+        padding: 20px;
+      }
+
+      .rubro-menu {
+        width: 90%;
+        right: 5%;
+      }
+
+      .row {
+        flex-direction: column;
+      }
+
+      .row button {
+        width: 100%;
+      }
+    }
+  </style>
+
+
+</style>
+<!-- Cambia la forma de cargar las bibliotecas -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+<script>
+  // Espera a que todo esté cargado
+  document.addEventListener('DOMContentLoaded', function() {
+    window.jsPDF = window.jspdf.jsPDF;
+  });
+</script>
+</head>
+<body>
+<!-- Botón flotante para gestión de rubros -->
+<button class="floating-rubro-btn" onclick="toggleRubroMenu()">≡</button>
+
+
+<!-- Menú de gestión de rubros -->
+<div class="rubro-menu" id="rubroMenu">
+  <h3>Gestión de Rubros</h3>
+  <input type="text" id="nuevoRubro" placeholder="Nuevo rubro">
+  <button onclick="agregarRubro()">Añadir Rubro</button>
+  
+  <select id="rubroAEliminar">
+    <option value="">Selecciona rubro a eliminar</option>
+  </select>
+  <button onclick="eliminarRubro()">Eliminar Rubro</button>
+  
+  <select id="rubroProducto">
+    <option value="">Selecciona rubro para producto</option>
+  </select>
+  <input type="text" id="nuevoProducto" placeholder="Nuevo producto">
+  <button onclick="agregarProducto()">Añadir Producto</button>
+</div>
+
+<!-- Burbuja flotante para edición rápida de stock -->
+<button class="floating-rubro-btn" id="stockQuickBtn" style="top: 40px; left: 20px; background-color: #ffb300; color: #004d40; font-size: 22px;" onclick="toggleStockMenu()">🛒</button>
+<div class="rubro-menu" id="stockMenu" style="z-index:1001; left:90px; right:auto; top:30px;">
+  <h3>Editar Stock Rápido</h3>
+  <label for="stockRubro">Seleccionar rubro:</label>
+  <select id="stockRubro" onchange="actualizarProductosStock()">
+    <option value="">-- Selecciona un rubro --</option>
+  </select>
+  <label for="stockProducto">Seleccionar producto:</label>
+  <select id="stockProducto" onchange="mostrarStockActual()">
+    <option value="">-- Selecciona un producto --</option>
+  </select>
+  <label for="stockActual">Cantidad de stock actual:</label>
+  <input type="number" id="stockActual" readonly style="background:#eee;">
+  <label for="nuevoStock">Nuevo stock:</label>
+  <input type="number" id="nuevoStock" min="0">
+  <button onclick="guardarStock()">Guardar Stock</button>
+</div>
+
+
+  
+  <!-- Marca de agua  -->
+  <div class="marca-agua">CPU-SIS Sta.Cruz</div>
+
+  <div id="pantalla-inicio">
+    <div class="container">
+      <h1>Bienvenido a Cuadernito Digital</h1>
+      <button id="btn-inicio">INICIO</button>
+    </div>
+  </div>
+
+<div id="cuadernito" class="container">
+  <h1 style="margin: 0;">Cuadernito Digital</h1>
+  <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px;">
+  <img src="https://scontent.fsrz1-2.fna.fbcdn.net/v/t39.30808-6/310602604_168610305828090_4039213277414922555_n.png?_nc_cat=110&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=p_usD23-lJgQ7kNvwENIeGb&_nc_oc=AdkCmMTJZf-B6PggyJ7dlFYVTWTFnF-rsTNslhUqYkIfy3nYbFRuL0r4d7RIUwGcrfbsgbVD87kgQ8sF9iiz2kRh&_nc_zt=23&_nc_ht=scontent.fsrz1-2.fna&_nc_gid=aLCfRZKU1JZ0ovnGtiFjsg&oh=00_AfQaOiEPurEdbEvniiuWpDvyDT3cDIKhjFT0gi2BH3_zaA&oe=6886065A" alt="Logo"
+  style="height: 58px; width: 58px; object-fit: cover; border-radius: 50%; border: 2px solid #00796b; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
+</div>
+    
+    <label for="tipo"></label>
+    <select id="tipo">
+      <option value="">-- Selecciona --</option>
+      <option value="ingreso">Ingreso</option>
+      <option value="gasto">Gasto</option>
+    </select>
+
+    <label for="tipo">Tipo de Ingreso</label>
+    <select id="categoria">
+      <option value="">-- Selecciona --</option>
+      <option value="Venta">Venta</option>
+      <option value="Gastos Personal">Gastos Personal</option>
+      <option value="Gastos Proveedor">Gastos Proveedor</option>
+      <option value="Gastos Del Negocio">Gastos Del Negocio</option>
+    </select>
+
+    <label for="rubro">Seleccionar rubro:</label>
+    <select id="rubro" onchange="actualizarProductos()">
+      <option value="">-- Selecciona un rubro --</option>
+      <!-- Opciones de rubro se llenan dinámicamente -->
+    </select>
+
+
+
+    <div style="margin-bottom: 6px;">
+      <label for="producto" style="margin-bottom:4px; font-weight:500;">Buscar o seleccionar producto:</label>
+      <select id="producto" onchange="mostrarStockProductoSeleccionado()" style="width:100%;">
+        <option value="">-- Selecciona un producto --</option>
+      </select>
+      <input type="text" id="buscadorProducto" placeholder="Buscar producto..." oninput="filtrarProductosPrincipal()" style="width:100%; margin-top:8px;">
+      <div id="stockProductoInfo" style="margin-bottom:10px;color:#00796b;font-weight:bold;"></div>
+    </div>
+
+
+<label for="cantidad">Cantidad Del Producto:</label>
+<input type="number" id="cantidad" placeholder="Cantidad" min="1" step="1">
+
+    <label for="monto">Precio Del Producto (Bs):</label>
+    <input type="number" id="monto" placeholder="Monto (Bs)">
+
+
+
+    <label for="fecha">Fecha del Movimiento (Haz clic en cualquier parte del campo):</label>
+    <input type="date" id="fecha">
+    <button onclick="registrarMovimiento()">Registrar</button>
+
+    <div class="row">
+      <button onclick="mostrarReporte('diario')">Reporte Diario</button>
+      <button onclick="mostrarReporte('semanal')">Reporte Semanal</button>
+    </div>
+    <div class="row">
+      <button onclick="mostrarReporte('mensual')">Reporte Mensual</button>
+      <button onclick="mostrarReporte('anual')">Reporte Anual</button>
+    </div>
+
+    <button onclick="mostrarGestor()">Movimiento Detallado</button>
+  
+  
+<button onclick="exportarGestorAPdf()">Exportar a PDF</button>
+
+
+
+    
+    <div class="manual-selector">
+      <label for="manuales">Seleccionar Manual:</label>
+      <select id="manuales" onchange="abrirManual()">
+        <option value="">-- Elige un manual --</option>
+        <option value="manual_uso_app.html">Manual de uso App</option>
+        <option value="manual_contable.html">Manual Contable</option>
+      </select>
+    </div>
+
+    <div id="reporte"></div>
+    <div id="gestor" class="hidden">
+      <h2>Movimiento Detallado</h2>
+      <ul id="lista"></ul>
+    </div>
+  </div>
+
+  <script>
+    let db;
+
+    // Cargar productosPorRubro desde localStorage o usar los valores por defecto
+    let productosPorRubro = JSON.parse(localStorage.getItem('productosPorRubro')) || {
+      "Textiles y Confección": ["Toallas ecológicas", "Toallas de baño", "Toallas de mano", "Tejidos a crochet", "Fundas de tazas", "Monederos de crochet", "Ganchos para cabello tejidos", "Bolsos y mochilas de tela reutilizable", "Pijamas de seda", "Camisetas de algodón personalizadas"],
+      "Alimentación y Bebidas": ["Licor de achachairu", "Dulce de café", "Escabeche de berenjena", "Cuñape (pan de queso)", "Queques (pasteles tradicionales)", "Empanadas", "Café molido", "Café en grano", "Sultana", "Jugos naturales de frutas"],
+      "Cosméticos y Cuidado Personal": ["Jabones artesanales", "Bálsamos labiales naturales", "Fortalecedor de pestañas", "Crema hidratante natural", "Aceite esencial de lavanda", "Exfoliante corporal de azúcar y aceite", "Perfumes artesanales", "Velas aromáticas naturales", "Shampoo sólido", "Mascarillas faciales naturales"],
+      "Accesorios y Bijutería": ["Collares de cuentas", "Pulseras de hilo", "Anillos de metal y piedras", "Aretes de madera y resina", "Broches para el cabello", "Cinturones artesanales", "Accesorios para el cabello", "Bolsos tejidos", "Fundas para teléfonos de tela", "Ganchos de cabello tejidos a mano"],
+      "Servicios y Consultoría": ["Asesoría en marketing digital", "Consultoría empresarial", "Asesoría legal para pequeñas empresas", "Capacitación en ventas", "Talleres de desarrollo personal", "Consultoría en gestión financiera", "Formación en gestión de redes sociales", "Cursos de liderazgo y emprendimiento", "Servicios de diseño gráfico para empresas", "Asesoría en branding personal"],
+      "Productos Personalizados y Artesanías": ["Tazas personalizadas", "Camisas sublimadas", "Mousepads personalizados", "Cojines personalizados", "Cuadros personalizados", "Jarrones personalizados", "Almohadas decorativas personalizadas", "Regalos personalizados para empresas", "Camisetas con diseño personalizado", "Llaveros personalizados"]
+    };
+    // Estructura para stock por producto
+    let stockPorProducto = JSON.parse(localStorage.getItem('stockPorProducto')) || {};
+
+    function actualizarProductos() {
+      const rubro = document.getElementById("rubro").value;
+      const productoSelect = document.getElementById("producto");
+      productoSelect.innerHTML = '<option value="">-- Selecciona un producto --</option>';
+      if (productosPorRubro[rubro]) {
+        productosPorRubro[rubro].forEach(producto => {
+          const option = document.createElement("option");
+          option.value = producto;
+          option.textContent = producto;
+          productoSelect.appendChild(option);
+        });
+      }
+      filtrarProductosPrincipal();
+      mostrarStockProductoSeleccionado();
+    }
+
+function filtrarProductosPrincipal() {
+  const filtro = document.getElementById('buscadorProducto').value.toLowerCase();
+  const productoSelect = document.getElementById('producto');
+  const rubro = document.getElementById('rubro').value;
+  productoSelect.innerHTML = '<option value="">-- Selecciona un producto --</option>';
+  if (productosPorRubro[rubro]) {
+    productosPorRubro[rubro].forEach(producto => {
+      if (!filtro || producto.toLowerCase().includes(filtro)) {
+        const option = document.createElement('option');
+        option.value = producto;
+        option.textContent = producto;
+        productoSelect.appendChild(option);
+      }
+    });
+  }
+}
+
+    function mostrarStockProductoSeleccionado() {
+      const rubro = document.getElementById('rubro').value;
+      const producto = document.getElementById('producto').value;
+      const key = rubro + '||' + producto;
+      const stock = stockPorProducto[key] !== undefined ? stockPorProducto[key] : '';
+      const infoDiv = document.getElementById('stockProductoInfo');
+      if (producto && rubro && stock !== '') {
+        infoDiv.textContent = `Stock actual: ${stock}`;
+      } else {
+        infoDiv.textContent = '';
+      }
+    }
+
+    // --- STOCK: Actualizar selectores de rubro y producto en menú de stock ---
+    function actualizarStockRubros() {
+      const stockRubro = document.getElementById('stockRubro');
+      stockRubro.innerHTML = '<option value="">-- Selecciona un rubro --</option>';
+      for (const rubro in productosPorRubro) {
+        const option = document.createElement('option');
+        option.value = rubro;
+        option.textContent = rubro;
+        stockRubro.appendChild(option);
+      }
+      actualizarProductosStock();
+    }
+
+// Llena el selector de productos en el menú de stock rápido según el rubro seleccionado
+function actualizarProductosStock() {
+  const rubro = document.getElementById('stockRubro').value;
+  const productoSelect = document.getElementById('stockProducto');
+  productoSelect.innerHTML = '<option value="">-- Selecciona un producto --</option>';
+  if (productosPorRubro[rubro]) {
+    productosPorRubro[rubro].forEach(producto => {
+      const option = document.createElement('option');
+      option.value = producto;
+      option.textContent = producto;
+      productoSelect.appendChild(option);
+    });
+  }
+  // Limpiar campos de stock al cambiar rubro
+  document.getElementById('stockActual').value = '';
+  document.getElementById('nuevoStock').value = '';
+}
+
+function actualizarProductos() {
+  const rubro = document.getElementById("rubro").value;
+  const productoSelect = document.getElementById("producto");
+  productoSelect.innerHTML = '<option value="">-- Selecciona un producto --</option>';
+  if (productosPorRubro[rubro]) {
+    productosPorRubro[rubro].forEach(producto => {
+      const option = document.createElement("option");
+      option.value = producto;
+      option.textContent = producto;
+      productoSelect.appendChild(option);
+    });
+  }
+  // Limpiar el buscador al cambiar rubro
+  const buscador = document.getElementById('buscadorProducto');
+  if (buscador) buscador.value = '';
+  mostrarStockProductoSeleccionado();
+}
+
+    function mostrarStockActual() {
+      const rubro = document.getElementById('stockRubro').value;
+      const producto = document.getElementById('stockProducto').value;
+      const key = rubro + '||' + producto;
+      document.getElementById('stockActual').value = stockPorProducto[key] || 0;
+      document.getElementById('nuevoStock').value = '';
+    }
+
+    function guardarStock() {
+      const rubro = document.getElementById('stockRubro').value;
+      const producto = document.getElementById('stockProducto').value;
+      const nuevoStock = document.getElementById('nuevoStock').value;
+      if (!rubro || !producto || nuevoStock === '' || isNaN(nuevoStock) || Number(nuevoStock) < 0) {
+        alert('Selecciona rubro, producto y un stock válido');
+        return;
+      }
+      const key = rubro + '||' + producto;
+      stockPorProducto[key] = Number(nuevoStock);
+      localStorage.setItem('stockPorProducto', JSON.stringify(stockPorProducto));
+      document.getElementById('stockActual').value = nuevoStock;
+      alert('Stock actualizado');
+    }
+
+function toggleStockMenu() {
+  const menu = document.getElementById('stockMenu');
+  menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+  if (menu.style.display === 'block') {
+    actualizarStockRubros();
+    // Si ya hay un rubro seleccionado, forzar el llenado de productos
+    const stockRubro = document.getElementById('stockRubro');
+    if (stockRubro.value) {
+      actualizarProductosStock();
+    }
+  }
+}
+    
+    function abrirManual() {
+      const manualSeleccionado = document.getElementById("manuales").value;
+      if (manualSeleccionado) {
+        window.location.href = manualSeleccionado;
+      }
+    }
+
+window.onload = function () {
+  const request = indexedDB.open("CuadernitoDB", 1);
+  const hoy = new Date().toISOString().split("T")[0];
+
+  // Configurar el campo de fecha
+  const fechaInput = document.getElementById("fecha");
+  fechaInput.value = hoy;
+  fechaInput.max = hoy;
+
+  // Solo permitir números enteros en el campo cantidad
+  const cantidadInput = document.getElementById('cantidad');
+  cantidadInput.addEventListener('input', function (e) {
+    // Eliminar todo lo que no sea dígito
+    this.value = this.value.replace(/[^0-9]/g, '');
+  });
+
+  // Solo permitir números decimales válidos en el campo monto (solo punto, no coma)
+  const montoInput = document.getElementById('monto');
+  montoInput.addEventListener('beforeinput', function (e) {
+    // Permitir navegación, borrar, etc.
+    if (e.inputType && ["deleteContentBackward", "deleteContentForward", "deleteByCut", "insertFromPaste"].includes(e.inputType)) return;
+    let nextValue = this.value;
+    const selectionStart = this.selectionStart;
+    const selectionEnd = this.selectionEnd;
+    // Simular el valor después de la entrada
+    if (typeof e.data === 'string') {
+      // Bloquear la coma
+      if (e.data === ',') {
+        e.preventDefault();
+        return;
+      }
+      nextValue = nextValue.slice(0, selectionStart) + e.data + nextValue.slice(selectionEnd);
+    }
+    // Solo permitir dígitos y un punto
+    if (!/^[0-9.]*$/.test(nextValue)) {
+      e.preventDefault();
+      return;
+    }
+    // Solo un punto decimal y no al inicio
+    if ((nextValue.match(/\./g) || []).length > 1 || (e.data === '.' && selectionStart === 0)) {
+      e.preventDefault();
+      return;
+    }
+  });
+  // Normalizar el valor final al salir del input
+  montoInput.addEventListener('change', function () {
+    let val = this.value.replace(/,/g, ''); // Elimina cualquier coma que haya quedado
+    val = val.replace(/[/%]/g, '');
+    val = val.replace(/[^0-9.]/g, '');
+    const parts = val.split('.');
+    if (parts.length > 2) {
+      val = parts[0] + '.' + parts.slice(1).join('');
+    }
+    if (val.startsWith('.')) val = '0' + val;
+    this.value = val;
+  });
+
+  // Hacer que todo el campo sea clickeable
+  fechaInput.addEventListener('click', function() {
+    this.showPicker ? this.showPicker() : this.focus();
+  });
+
+  // Agregar evento para hacer clic en cualquier parte del campo
+  fechaInput.addEventListener('mousedown', function(e) {
+    e.preventDefault();
+    this.focus();
+    this.click();
+  });
+
+  // --- ACTUALIZAR SELECTORES DE RUBROS Y PRODUCTOS AL CARGAR LA PÁGINA ---
+  actualizarSelectorPrincipalRubros();
+  actualizarSelectoresRubros();
+  actualizarProductos();
+
+  request.onerror = function (event) {
+    console.error("Error al abrir IndexedDB", event);
+  };
+
+  request.onsuccess = function (event) {
+    db = event.target.result;
+    console.log("Base de datos abierta");
+  };
+
+  request.onupgradeneeded = function (event) {
+    db = event.target.result;
+    db.createObjectStore("movimientos", { keyPath: "id", autoIncrement: true });
+    console.log("Base de datos creada");
+  };
+
+  document.getElementById("btn-inicio").addEventListener("click", () => {
+    document.getElementById("pantalla-inicio").style.display = "none";
+    document.getElementById("cuadernito").style.display = "block";
+  });
+};
+
+// Llenar el selector principal de rubros desde productosPorRubro
+function actualizarSelectorPrincipalRubros() {
+  const rubroSelect = document.getElementById('rubro');
+  const valorActual = rubroSelect.value;
+  rubroSelect.innerHTML = '<option value="">-- Selecciona un rubro --</option>';
+  for (const rubro in productosPorRubro) {
+    const option = document.createElement('option');
+    option.value = rubro;
+    option.textContent = rubro;
+    rubroSelect.appendChild(option);
+  }
+  // Restaurar selección si es posible
+  if (valorActual && productosPorRubro[valorActual]) {
+    rubroSelect.value = valorActual;
+  }
+}
+
+    function registrarMovimiento() {
+      const tipo = document.getElementById("tipo").value;
+      const categoria = document.getElementById("categoria").value;
+      const rubro = document.getElementById("rubro").value;
+      const producto = document.getElementById("producto").value;
+      const cantidad = Number(document.getElementById("cantidad").value);
+      const monto = Number(document.getElementById("monto").value);
+      const fecha = document.getElementById("fecha").value;
+
+      if (!tipo || !categoria || !rubro || !producto ||  !fecha) {
+        alert("Por favor, completa todos los campos correctamente");
+        return;
+      } else if (isNaN(cantidad) || isNaN(monto) || cantidad <= 0 || monto <= 0 ) {
+        alert("La cantidad y el monto deben ser mayores a 0.");
+       return;
+      }
+
+      // Obtener hora actual
+      const now = new Date();
+      const hora = now.toTimeString().slice(0,8); // HH:mm:ss
+
+      const movimiento = {
+        tipo: tipo.toLowerCase(),
+        categoria,
+        rubro,
+        producto,
+        cantidad,
+        monto: (monto * cantidad).toFixed(2),
+        fecha,
+        hora
+      };
+
+      // Actualizar stock automáticamente SOLO si es una venta/gasto
+      const key = rubro + '||' + producto;
+      if (tipo.toLowerCase() === 'gasto' || categoria.toLowerCase() === 'venta') {
+        stockPorProducto[key] = (stockPorProducto[key] || 0) - cantidad;
+        if (stockPorProducto[key] < 0) stockPorProducto[key] = 0;
+        localStorage.setItem('stockPorProducto', JSON.stringify(stockPorProducto));
+      }
+      mostrarStockProductoSeleccionado();
+
+      const tx = db.transaction(["movimientos"], "readwrite");
+      const store = tx.objectStore("movimientos");
+      store.add(movimiento);
+
+      tx.oncomplete = function () {
+        alert("Movimiento registrado exitosamente.");
+        document.getElementById("tipo").value = "";
+        document.getElementById("categoria").value = "";
+        document.getElementById("rubro").value = "";
+        document.getElementById("producto").value = "";
+        document.getElementById("cantidad").value = "";
+        document.getElementById("monto").value = "";
+      };
+
+      tx.onerror = function (event) {
+        console.error("Error al registrar movimiento", event);
+        alert("Ocurrió un error al registrar el movimiento.");
+      };
+    }
+
+    function mostrarReporte(periodo) {
+      const hoy = new Date();
+      hoy.setHours(0, 0, 0, 0);
+      const hoyStr = hoy.toISOString().split("T")[0];
+      let ingresos = 0, gastos = 0;
+
+      const tx = db.transaction(["movimientos"], "readonly");
+      const store = tx.objectStore("movimientos");
+      const request = store.openCursor();
+
+      request.onsuccess = function (event) {
+        const cursor = event.target.result;
+        if (cursor) {
+          const d = cursor.value;
+          const [anio, mes, dia] = d.fecha.split("-").map(Number);
+          const fecha = new Date(anio, mes - 1, dia);
+          fecha.setHours(0, 0, 0, 0);
+
+          let dentroPeriodo = false;
+
+          switch (periodo) {
+            case 'diario':
+              dentroPeriodo = d.fecha === hoyStr;
+              break;
+
+            case 'semanal': {
+              const inicioSemana = new Date(hoy);
+              inicioSemana.setDate(hoy.getDate() - hoy.getDay()); // domingo
+              const finSemana = new Date(inicioSemana);
+              finSemana.setDate(inicioSemana.getDate() + 6);
+              dentroPeriodo = fecha >= inicioSemana && fecha <= finSemana;
+              break;
+            }
+
+            case 'mensual':
+              dentroPeriodo = fecha.getMonth() === hoy.getMonth() &&
+                              fecha.getFullYear() === hoy.getFullYear();
+              break;
+
+            case 'anual':
+              dentroPeriodo = fecha.getFullYear() === hoy.getFullYear();
+              break;
+          }
+
+          if (dentroPeriodo) {
+            const montoNum = Number(d.monto);
+            if (!isNaN(montoNum)) {
+              if (d.tipo && d.tipo.toLowerCase() === "ingreso") ingresos += montoNum;
+              else gastos += montoNum;
+            }
+          }
+
+          cursor.continue();
+        } else {
+          const saldo = ingresos - gastos;
+          document.getElementById("reporte").innerHTML = `
+            <h3>Reporte ${periodo.charAt(0).toUpperCase() + periodo.slice(1)}</h3>
+            <p><strong>Ingresos:</strong> Bs ${ingresos.toFixed(2)}</p>
+            <p><strong>Gastos:</strong> Bs ${gastos.toFixed(2)}</p>
+            <p><strong>Saldo:</strong> Bs ${saldo.toFixed(2)}</p>
+          `;
+        }
+      };
+    }
+    
+    function mostrarGestor() {
+      const lista = document.getElementById("lista");
+      lista.innerHTML = "";
+
+      const tx = db.transaction(["movimientos"], "readonly");
+      const store = tx.objectStore("movimientos");
+      const request = store.openCursor();
+
+      request.onsuccess = function (event) {
+        const cursor = event.target.result;
+        if (cursor) {
+          const d = cursor.value;
+          const li = document.createElement("li");
+          li.innerText = `${d.fecha} - ${d.tipo.toUpperCase()} Bs ${d.monto} (${d.producto}) - ${d.categoria}`;
+          lista.appendChild(li);
+          cursor.continue();
+        }
+      };
+
+      document.getElementById("gestor").classList.toggle("hidden");
+    }
+      
+
+async function exportarGestorAPdf() {
+  try {
+    // Verificar si jsPDF está disponible
+    if (typeof jsPDF === 'undefined') {
+      alert('Error: La biblioteca jsPDF no está cargada correctamente. Recargue la página.');
+      return;
+    }
+
+    // Crear una instancia de jsPDF en orientación horizontal (landscape)
+    const doc = new jsPDF({ orientation: 'landscape' });
+
+    // Mostrar mensaje de "Generando PDF..."
+    alert('Generando PDF... Por favor espere.');
+
+    // Obtener los datos de IndexedDB
+    const movimientos = await new Promise((resolve, reject) => {
+      const tx = db.transaction(["movimientos"], "readonly");
+      const store = tx.objectStore("movimientos");
+      const request = store.getAll();
+
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(new Error('Error al obtener datos de la base de datos'));
+    });
+
+    // Configuración del documento
+    doc.setFontSize(16);
+    doc.setTextColor(0, 77, 64);
+    doc.text('Reporte de Movimientos - Cuadernito Digital', 148, 15, { align: 'center' }); // 148 es el centro de una hoja A4 horizontal
+
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+
+    // Encabezados de columna
+    doc.setFont(undefined, 'bold');
+    doc.text('Fecha', 15, 30);
+    doc.text('Hora', 40, 30);
+    doc.text('Tipo', 60, 30);
+    doc.text('Categoría', 100, 30);
+    doc.text('Producto', 160, 30);
+    doc.text('Monto (Bs)', 260, 30, { align: 'right' });
+
+    doc.setFont(undefined, 'normal');
+
+    let y = 40;
+    let totalIngresos = 0;
+    let totalGastos = 0;
+
+    if (movimientos.length === 0) {
+      doc.text('No hay movimientos registrados', 20, y);
+    } else {
+      movimientos.forEach((mov) => {
+        if (y > 190) { // Menor altura por ser horizontal
+          doc.addPage();
+          y = 20;
+        }
+
+        // Validar y formatear los datos
+        const fecha = mov.fecha || 'Sin fecha';
+        const hora = mov.hora || '-';
+        const tipo = mov.tipo ? mov.tipo.charAt(0).toUpperCase() + mov.tipo.slice(1) : 'Sin tipo';
+        const categoria = mov.categoria || 'Sin categoría';
+        const producto = mov.producto || 'Sin producto';
+        const monto = isNaN(mov.monto) ? 0 : parseFloat(mov.monto);
+
+        doc.text(fecha, 15, y);
+        doc.text(hora, 40, y);
+        doc.text(tipo, 60, y);
+        doc.text(categoria, 100, y);
+        doc.text(producto, 160, y);
+        doc.text(monto.toFixed(2), 260, y, { align: 'right' });
+
+        if (mov.tipo && mov.tipo.toLowerCase() === 'ingreso') {
+          totalIngresos += monto;
+        } else {
+          totalGastos += monto;
+        }
+
+        y += 10;
+      });
+
+      // Totales
+      y += 10;
+      doc.setFont(undefined, 'bold');
+      doc.text('TOTAL INGRESOS:', 200, y, { align: 'right' });
+      doc.text(totalIngresos.toFixed(2) + ' Bs', 260, y, { align: 'right' });
+      y += 10;
+      doc.text('TOTAL GASTOS:', 200, y, { align: 'right' });
+      doc.text(totalGastos.toFixed(2) + ' Bs', 260, y, { align: 'right' });
+      y += 10;
+      doc.text('SALDO FINAL:', 200, y, { align: 'right' });
+      doc.text((totalIngresos - totalGastos).toFixed(2) + ' Bs', 260, y, { align: 'right' });
+    }
+
+    // Pie de página
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text('Generado el ' + new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString().slice(0,5), 148, 200, { align: 'center' });
+
+    // Guardar el PDF
+    doc.save('reporte_movimientos_' + new Date().toISOString().slice(0, 10) + '.pdf');
+
+  } catch (error) {
+    console.error('Error al generar PDF:', error);
+    alert('Ocurrió un error al generar el PDF: ' + error.message);
+  }
+}
+
+
+
+// Función para mostrar/ocultar el menú de rubros
+function toggleRubroMenu() {
+  const menu = document.getElementById('rubroMenu');
+  menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+  // Actualizar los selectores cuando se abre el menú
+  if (menu.style.display === 'block') {
+    actualizarSelectoresRubros();
+  }
+  // Ocultar menú de stock si está abierto
+  document.getElementById('stockMenu').style.display = 'none';
+}
+
+// Actualizar los selectores de rubros
+function actualizarSelectoresRubros() {
+  const rubroSelect = document.getElementById('rubro');
+  const rubroAEliminar = document.getElementById('rubroAEliminar');
+  const rubroProducto = document.getElementById('rubroProducto');
+  
+  // Limpiar selectores
+  rubroAEliminar.innerHTML = '<option value="">Selecciona rubro a eliminar</option>';
+  rubroProducto.innerHTML = '<option value="">Selecciona rubro para producto</option>';
+  
+  // Llenar con los rubros existentes
+  for (const rubro in productosPorRubro) {
+    const option1 = document.createElement('option');
+    option1.value = rubro;
+    option1.textContent = rubro;
+    rubroAEliminar.appendChild(option1.cloneNode(true));
+    
+    const option2 = document.createElement('option');
+    option2.value = rubro;
+    option2.textContent = rubro;
+    rubroProducto.appendChild(option2);
+  }
+}
+
+// Función para quitar tildes y normalizar texto
+function normalizarTexto(texto) {
+  return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+}
+
+// Función para capitalizar correctamente los nombres de rubros y productos
+function capitalizarNombre(nombre) {
+  const conectores = ['y', 'e', 'de', 'del', 'la', 'el', 'los', 'las', 'para', 'en', 'con', 'a', 'por', 'o', 'u'];
+  return nombre
+    .toLowerCase()
+    .split(' ')
+    .map((palabra, i) => {
+      if (conectores.includes(palabra) && i !== 0) {
+        return palabra;
+      }
+      return palabra.charAt(0).toUpperCase() + palabra.slice(1);
+    })
+    .join(' ');
+}
+
+// Añadir nuevo rubro
+function agregarRubro() {
+  let nuevoRubro = document.getElementById('nuevoRubro').value.trim();
+  nuevoRubro = capitalizarNombre(nuevoRubro);
+  // Normalizar el nuevo rubro para comparar sin tildes ni mayúsculas
+  const nuevoRubroNorm = normalizarTexto(nuevoRubro);
+  let existe = false;
+  for (const rubro in productosPorRubro) {
+    if (normalizarTexto(rubro) === nuevoRubroNorm) {
+      existe = true;
+      break;
+    }
+  }
+  if (nuevoRubro && !existe) {
+    productosPorRubro[nuevoRubro] = [];
+    // Guardar en localStorage
+    localStorage.setItem('productosPorRubro', JSON.stringify(productosPorRubro));
+    // Actualizar el selector principal y los del menú
+    actualizarSelectorPrincipalRubros();
+    actualizarSelectoresRubros();
+    // Limpiar campo
+    document.getElementById('nuevoRubro').value = '';
+    alert('Rubro añadido con éxito');
+  } else {
+    alert('El rubro ya existe o el nombre está vacío');
+  }
+}
+
+// Eliminar rubro
+function eliminarRubro() {
+  const rubroAEliminar = document.getElementById('rubroAEliminar').value;
+  if (rubroAEliminar && confirm(`¿Estás seguro de eliminar el rubro "${rubroAEliminar}"?`)) {
+    delete productosPorRubro[rubroAEliminar];
+    // Guardar en localStorage
+    localStorage.setItem('productosPorRubro', JSON.stringify(productosPorRubro));
+    // Actualizar el selector principal y los del menú
+    actualizarSelectorPrincipalRubros();
+    actualizarSelectoresRubros();
+    alert('Rubro eliminado con éxito');
+  }
+}
+
+
+// Añadir nuevo producto a un rubro
+function agregarProducto() {
+  const rubro = document.getElementById('rubroProducto').value;
+  let nuevoProducto = document.getElementById('nuevoProducto').value.trim();
+  nuevoProducto = capitalizarNombre(nuevoProducto);
+  const nuevoProductoNorm = normalizarTexto(nuevoProducto);
+  let existe = false;
+  if (rubro && nuevoProducto) {
+    for (const prod of productosPorRubro[rubro]) {  
+      if (normalizarTexto(prod) === nuevoProductoNorm) {
+        existe = true;
+        break;
+      }
+    }
+    if (!existe) {
+      productosPorRubro[rubro].push(nuevoProducto);
+      // Guardar en localStorage
+      localStorage.setItem('productosPorRubro', JSON.stringify(productosPorRubro));
+      // Si el rubro seleccionado en el formulario principal es el mismo, actualizar productos
+      if (document.getElementById('rubro').value === rubro) {
+        actualizarProductos();
+      }
+      // Limpiar campos
+      document.getElementById('nuevoProducto').value = '';
+      alert('Producto añadido con éxito');
+    } else {
+      alert('Este producto ya existe en el rubro seleccionado');
+    }
+  } else {
+    alert('Selecciona un rubro y escribe un nombre de producto');
+  }
+}
+
+  </script>
+
+</body>
+</html>

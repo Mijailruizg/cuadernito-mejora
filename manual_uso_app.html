@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manual de Uso de la Aplicación</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f2f2f2;
+      background-image: url('https://i.pinimg.com/originals/0d/76/e4/0d76e404f8446398414a143f05076084.jpg');
+      background-size: cover;
+      background-position: center top;
+      background-repeat: no-repeat;
+    }
+    .header {
+      background-color: #fff;
+      padding: 15px 30px;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #ccc;
+    }
+    .back-button {
+      font-size: 16px;
+      background: none;
+      border: none;
+      color: #007BFF;
+      cursor: pointer;
+      padding: 0;
+      margin: 0;
+    }
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    h2 {
+      color: #444;
+      margin-top: 30px;
+    }
+    p, li {
+      font-size: 18px;
+      line-height: 1.6;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <button class="back-button" onclick="location.href='index.html'">← Regresar</button>
+  </div>
+
+  <div class="container">
+    <h1>Manual de Uso de la Aplicación</h1>
+
+    <h2>1. Iniciar Sesión</h2>
+    <p>Ingresa tu nombre de usuario y contraseña en los campos correspondientes y haz clic en el botón <strong>"Entrar"</strong>.</p>
+
+    <h2>2. Registrar Movimiento</h2>
+    <p>Después de iniciar sesión:</p>
+    <ul>
+      <li>Ingresa un monto en Bolivianos.</li>
+      <li>Selecciona si es un <strong>Ingreso</strong> o un <strong>Gasto</strong>.</li>
+      <li>Elige una categoría (Venta, Personal, Proveedor o Otros).</li>
+      <li>Selecciona una fecha.</li>
+      <li>Haz clic en <strong>"Registrar"</strong> para guardar el movimiento.</li>
+    </ul>
+
+    <h2>3. Ver Reportes</h2>
+    <p>Utiliza los botones para generar reportes diarios, semanales, mensuales o anuales. Verás un resumen con ingresos, gastos y saldo.</p>
+
+    <h2>4. Gestor de Movimientos</h2>
+    <p>Haz clic en el botón <strong>"Gestor"</strong> para visualizar todos los movimientos registrados. Allí se listan con fecha, tipo, monto y categoría.</p>
+  </div>
+
+</body>
+</html>
