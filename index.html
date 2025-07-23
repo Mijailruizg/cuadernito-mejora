@@ -343,15 +343,13 @@
 
 
 
-    <div style="margin-bottom: 6px;">
-      <label for="producto" style="margin-bottom:4px; font-weight:500;">Buscar o seleccionar producto:</label>
-      <select id="producto" onchange="mostrarStockProductoSeleccionado()" style="width:100%;">
-        <option value="">-- Selecciona un producto --</option>
-      </select>
-      <input type="text" id="buscadorProducto" placeholder="Buscar producto..." oninput="filtrarProductosPrincipal()" style="width:100%; margin-top:8px;">
-      <div id="stockProductoInfo" style="margin-bottom:10px;color:#00796b;font-weight:bold;"></div>
-    </div>
-
+<label for="producto">Buscar o seleccionar producto:</label>
+<input list="listaProductos" id="producto" placeholder="Buscar producto o Selecciona" 
+       oninput="filtrarProductos()" onchange="actualizarStockDesdeInput()">
+<datalist id="listaProductos">
+  <!-- Opciones se llenan dinámicamente -->
+</datalist>
+<div id="stockProductoInfo" style="margin-bottom:10px;color:#00796b;font-weight:bold;"></div>
 
 <label for="cantidad">Cantidad Del Producto:</label>
 <input type="number" id="cantidad" placeholder="Cantidad" min="1" step="1">
@@ -410,24 +408,141 @@
       "Servicios y Consultoría": ["Asesoría en marketing digital", "Consultoría empresarial", "Asesoría legal para pequeñas empresas", "Capacitación en ventas", "Talleres de desarrollo personal", "Consultoría en gestión financiera", "Formación en gestión de redes sociales", "Cursos de liderazgo y emprendimiento", "Servicios de diseño gráfico para empresas", "Asesoría en branding personal"],
       "Productos Personalizados y Artesanías": ["Tazas personalizadas", "Camisas sublimadas", "Mousepads personalizados", "Cojines personalizados", "Cuadros personalizados", "Jarrones personalizados", "Almohadas decorativas personalizadas", "Regalos personalizados para empresas", "Camisetas con diseño personalizado", "Llaveros personalizados"]
     };
-    // Estructura para stock por producto
-    let stockPorProducto = JSON.parse(localStorage.getItem('stockPorProducto')) || {};
 
-    function actualizarProductos() {
-      const rubro = document.getElementById("rubro").value;
-      const productoSelect = document.getElementById("producto");
-      productoSelect.innerHTML = '<option value="">-- Selecciona un producto --</option>';
-      if (productosPorRubro[rubro]) {
-        productosPorRubro[rubro].forEach(producto => {
-          const option = document.createElement("option");
-          option.value = producto;
-          option.textContent = producto;
-          productoSelect.appendChild(option);
-        });
-      }
-      filtrarProductosPrincipal();
-      mostrarStockProductoSeleccionado();
+    // JavaScript
+// Función para actualizar los productos cuando cambia el rubro
+function actualizarProductos() {
+  const rubro = document.getElementById("rubro").value;
+  const inputProducto = document.getElementById("producto");
+  const datalist = document.getElementById("listaProductos");
+  
+  // Limpiar el input y el datalist
+  inputProducto.value = '';
+  datalist.innerHTML = '';
+  document.getElementById('stockProductoInfo').textContent = '';
+  
+  if (rubro && productosPorRubro[rubro]) {
+    // Ordenar productos alfabéticamente
+    const productosOrdenados = [...productosPorRubro[rubro]].sort();
+    
+    // Llenar el datalist con todos los productos del rubro
+    productosOrdenados.forEach(producto => {
+      const option = document.createElement("option");
+      option.value = producto;
+      datalist.appendChild(option);
+    });
+  }
+}
+
+// Función para filtrar productos mientras se escribe
+function filtrarProductos() {
+  const rubro = document.getElementById("rubro").value;
+  const inputProducto = document.getElementById("producto");
+  const textoBusqueda = inputProducto.value.toLowerCase();
+  const datalist = document.getElementById("listaProductos");
+  
+  if (!rubro) {
+    alert("Primero selecciona un rubro");
+    inputProducto.value = '';
+    return;
+  }
+
+  // Limpiar el datalist
+  datalist.innerHTML = '';
+  
+  // Filtrar productos que coincidan con la búsqueda
+  const productosFiltrados = productosPorRubro[rubro].filter(producto => 
+    producto.toLowerCase().includes(textoBusqueda)
+  );
+
+  // Llenar el datalist con los productos filtrados
+  productosFiltrados.forEach(producto => {
+    const option = document.createElement("option");
+    option.value = producto;
+    datalist.appendChild(option);
+  });
+}
+
+// Función para actualizar el stock cuando se selecciona un producto
+function actualizarStockDesdeInput() {
+  const rubro = document.getElementById('rubro').value;
+  const producto = document.getElementById('producto').value;
+  const infoDiv = document.getElementById('stockProductoInfo');
+  
+  if (rubro && producto && productosPorRubro[rubro]?.includes(producto)) {
+    const key = rubro + '||' + producto;
+    const stock = stockPorProducto[key] !== undefined ? stockPorProducto[key] : 0;
+    infoDiv.textContent = `Stock actual: ${stock}`;
+  } else {
+    infoDiv.textContent = '';
+    // Si el producto no existe, limpiar el campo
+    if (producto && !productosPorRubro[rubro]?.includes(producto)) {
+      document.getElementById('producto').value = '';
     }
+  }
+}
+
+// Inicialización (llamar al cargar la página)
+window.addEventListener('DOMContentLoaded', () => {
+  // Llenar el selector de rubros
+  const rubroSelect = document.getElementById('rubro');
+  for (const rubro in productosPorRubro) {
+    const option = document.createElement('option');
+    option.value = rubro;
+    option.textContent = rubro;
+    rubroSelect.appendChild(option);
+  }
+});
+
+// Función para mostrar el stock del producto seleccionado
+function mostrarStockProductoSeleccionado() {
+  const rubro = document.getElementById('rubro').value;
+  const producto = document.getElementById('producto').value;
+  const infoDiv = document.getElementById('stockProductoInfo');
+  
+  if (rubro && producto) {
+    const key = rubro + '||' + producto;
+    const stock = stockPorProducto[key] !== undefined ? stockPorProducto[key] : 0;
+    infoDiv.textContent = `Stock actual: ${stock}`;
+  } else {
+    infoDiv.textContent = '';
+  }
+}
+
+// Evento para filtrar productos mientras se escribe
+document.getElementById("producto").addEventListener("input", function() {
+  const rubro = document.getElementById("rubro").value;
+  const textoBusqueda = this.value.toLowerCase();
+  const datalist = document.getElementById("listaProductos");
+  
+  if (!rubro) {
+    alert("Primero selecciona un rubro");
+    this.value = '';
+    return;
+  }
+
+  // Mostrar todos los productos si no hay texto de búsqueda
+  if (!textoBusqueda) {
+    actualizarProductos();
+    return;
+  }
+
+  // Filtrar productos que coincidan con la búsqueda
+  const productosFiltrados = productosPorRubro[rubro].filter(producto => 
+    producto.toLowerCase().includes(textoBusqueda)
+  );
+
+  // Actualizar el datalist con los productos filtrados
+  datalist.innerHTML = '';
+  productosFiltrados.forEach(producto => {
+    const option = document.createElement("option");
+    option.value = producto;
+    datalist.appendChild(option);
+  });
+
+  mostrarStockProductoSeleccionado();
+});
+
 
 function filtrarProductosPrincipal() {
   const filtro = document.getElementById('buscadorProducto').value.toLowerCase();
@@ -446,18 +561,6 @@ function filtrarProductosPrincipal() {
   }
 }
 
-    function mostrarStockProductoSeleccionado() {
-      const rubro = document.getElementById('rubro').value;
-      const producto = document.getElementById('producto').value;
-      const key = rubro + '||' + producto;
-      const stock = stockPorProducto[key] !== undefined ? stockPorProducto[key] : '';
-      const infoDiv = document.getElementById('stockProductoInfo');
-      if (producto && rubro && stock !== '') {
-        infoDiv.textContent = `Stock actual: ${stock}`;
-      } else {
-        infoDiv.textContent = '';
-      }
-    }
 
     // --- STOCK: Actualizar selectores de rubro y producto en menú de stock ---
     function actualizarStockRubros() {
@@ -1052,8 +1155,33 @@ function agregarProducto() {
     alert('Selecciona un rubro y escribe un nombre de producto');
   }
 }
+<!-- Agregado: Mostrar hora en Movimiento Detallado -->
+function mostrarGestor() {
+  const lista = document.getElementById("lista");
+  lista.innerHTML = "";
+
+  const tx = db.transaction(["movimientos"], "readonly");
+  const store = tx.objectStore("movimientos");
+  const request = store.openCursor();
+
+  request.onsuccess = function (event) {
+    const cursor = event.target.result;
+    if (cursor) {
+      const d = cursor.value;
+      const li = document.createElement("li");
+      li.innerText = `${d.fecha} ${d.hora || ''} - ${d.tipo.toUpperCase()} Bs ${d.monto} (${d.producto}) - ${d.categoria}`;
+      lista.appendChild(li);
+      cursor.continue();
+    }
+  };
+
+  document.getElementById("gestor").classList.toggle("hidden");
+}
+
 
   </script>
 
 </body>
 </html>
+
+
