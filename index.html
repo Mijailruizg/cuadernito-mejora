@@ -934,7 +934,7 @@ function registrarMovimiento() {
           const d = cursor.value;
       const metodo = d.metodoPago ? ` - ${d.metodoPago}` : '';
       const li = document.createElement("li");
-      li.innerText = `${d.fecha} - ${d.tipo.toUpperCase()} Bs ${d.monto} (${d.producto}) - ${d.categoria}${metodo}`;
+      li.innerText = `${d.fecha} ${d.hora || ''} - ${d.tipo.toUpperCase()} Bs ${d.monto} (${d.producto}) - ${d.categoria} - Cantidad: ${d.cantidad}`;
       lista.appendChild(li);
           cursor.continue();
         }
@@ -952,8 +952,8 @@ async function exportarGestorAPdf() {
       return;
     }
 
-    // Crear una instancia de jsPDF en orientación horizontal (landscape)
-    const doc = new jsPDF({ orientation: 'landscape' });
+    // Crear una instancia de jsPDF con mayor ancho (formato personalizado)
+    const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: [350, 210] }); // 350mm de ancho, 210mm de alto
 
     // Mostrar mensaje de "Generando PDF..."
     alert('Generando PDF... Por favor espere.');
@@ -971,20 +971,21 @@ async function exportarGestorAPdf() {
     // Configuración del documento
     doc.setFontSize(16);
     doc.setTextColor(0, 77, 64);
-    doc.text('Reporte de Movimientos - Cuadernito Digital', 148, 15, { align: 'center' }); // 148 es el centro de una hoja A4 horizontal
+    doc.text('Reporte de Movimientos - Cuadernito Digital', 175, 15, { align: 'center' }); // 175 es el centro de la hoja personalizada
 
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
 
-    // Encabezados de columna
+    // Encabezados de columna (ajustados para mayor ancho)
     doc.setFont(undefined, 'bold');
     doc.text('Fecha', 15, 30);
     doc.text('Hora', 40, 30);
-    doc.text('Tipo', 60, 30);
+    doc.text('Tipo', 65, 30);
     doc.text('Categoría', 100, 30);
     doc.text('Producto', 160, 30);
-    doc.text('Método', 210, 30);
-    doc.text('Monto (Bs)', 260, 30, { align: 'right' });
+    doc.text('Cantidad', 210, 30);
+    doc.text('Método', 250, 30);
+    doc.text('Monto (Bs)', 320, 30, { align: 'right' });
 
     doc.setFont(undefined, 'normal');
 
@@ -1013,11 +1014,12 @@ async function exportarGestorAPdf() {
 
         doc.text(fecha, 15, y);
         doc.text(hora, 40, y);
-        doc.text(tipo, 60, y);
+        doc.text(tipo, 65, y);
         doc.text(categoria, 100, y);
         doc.text(producto, 160, y);
-        doc.text(metodo, 210, y);
-        doc.text(monto.toFixed(2), 260, y, { align: 'right' });
+        doc.text((mov.cantidad !== undefined ? mov.cantidad : '-').toString(), 210, y);
+        doc.text(metodo, 250, y);
+        doc.text(monto.toFixed(2), 320, y, { align: 'right' });
 
         if (mov.tipo && mov.tipo.toLowerCase() === 'ingreso') {
           totalIngresos += monto;
@@ -1031,20 +1033,20 @@ async function exportarGestorAPdf() {
       // Totales
       y += 10;
       doc.setFont(undefined, 'bold');
-      doc.text('TOTAL INGRESOS:', 200, y, { align: 'right' });
-      doc.text(totalIngresos.toFixed(2) + ' Bs', 260, y, { align: 'right' });
+      doc.text('TOTAL INGRESOS:', 210, y, { align: 'right' });
+      doc.text(totalIngresos.toFixed(2) + ' Bs', 320, y, { align: 'right' });
       y += 10;
-      doc.text('TOTAL GASTOS:', 200, y, { align: 'right' });
-      doc.text(totalGastos.toFixed(2) + ' Bs', 260, y, { align: 'right' });
+      doc.text('TOTAL GASTOS:', 210, y, { align: 'right' });
+      doc.text(totalGastos.toFixed(2) + ' Bs', 320, y, { align: 'right' });
       y += 10;
-      doc.text('SALDO FINAL:', 200, y, { align: 'right' });
-      doc.text((totalIngresos - totalGastos).toFixed(2) + ' Bs', 260, y, { align: 'right' });
+      doc.text('SALDO FINAL:', 210, y, { align: 'right' });
+      doc.text((totalIngresos - totalGastos).toFixed(2) + ' Bs', 320, y, { align: 'right' });
     }
 
     // Pie de página
     doc.setFontSize(10);
     doc.setTextColor(100);
-    doc.text('Generado el ' + new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString().slice(0,5), 148, 200, { align: 'center' });
+    doc.text('Generado el ' + new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString().slice(0,5), 175, 200, { align: 'center' });
 
     // Guardar el PDF
     doc.save('reporte_movimientos_' + new Date().toISOString().slice(0, 10) + '.pdf');
@@ -1202,7 +1204,7 @@ function mostrarGestor() {
     if (cursor) {
       const d = cursor.value;
       const li = document.createElement("li");
-      li.innerText = `${d.fecha} ${d.hora || ''} - ${d.tipo.toUpperCase()} Bs ${d.monto} (${d.producto}) - ${d.categoria}`;
+      li.innerText = `${d.fecha} ${d.hora || ''} - ${d.tipo.toUpperCase()} Bs ${d.monto} (${d.producto}) - ${d.categoria} - Cantidad: ${d.cantidad}`;
       lista.appendChild(li);
       cursor.continue();
     }
