@@ -383,9 +383,12 @@
 
 
 
-<label for="producto">Buscar o seleccionar producto:</label>
-<input list="listaProductos" id="producto" placeholder="Buscar producto o selecciona" autocomplete="off">
-<datalist id="listaProductos"></datalist>
+
+<label for="productoCombo">Buscar o seleccionar producto:</label>
+<div style="position:relative; margin-bottom:10px;">
+  <input type="text" id="productoComboInput" placeholder="Buscar producto o selecciona" autocomplete="off" style="width:100%;padding:12px 14px;border:2px solid #b2dfdb;border-radius:10px;font-size:16px;background-color:#f9fdfa;position:relative;z-index:2;" oninput="filtrarOpcionesProductoCombo()" onfocus="mostrarOpcionesProductoCombo()" onblur="ocultarOpcionesProductoComboConRetraso()">
+  <select id="productoComboSelect" size="5" style="display:none;position:absolute;top:44px;left:0;width:100%;z-index:3;background:white;border:2px solid #26a69a;border-radius:0 0 10px 10px;max-height:180px;overflow-y:auto;box-shadow:0 2px 8px rgba(0,0,0,0.08);font-size:16px;" onclick="seleccionarOpcionProductoCombo()"></select>
+</div>
 <div id="stockProductoInfo" style="margin-bottom:10px;color:#00796b;font-weight:bold;"></div>
 
 <label for="cantidad">Cantidad Del Producto:</label>
@@ -459,22 +462,88 @@ let stockPorProducto = JSON.parse(localStorage.getItem('stockPorProducto')) || {
 
     // JavaScript
 
-// Actualiza el datalist de productos según el rubro seleccionado
+
+// Combo producto: actualiza las opciones del select según el rubro
+
 function actualizarProductos() {
   const rubro = document.getElementById("rubro").value;
-  const inputProducto = document.getElementById("producto");
-  const datalist = document.getElementById("listaProductos");
-  inputProducto.value = '';
-  datalist.innerHTML = '';
+  const input = document.getElementById("productoComboInput");
+  const select = document.getElementById("productoComboSelect");
+  input.value = '';
+  select.innerHTML = '';
   document.getElementById('stockProductoInfo').textContent = '';
   if (rubro && productosPorRubro[rubro]) {
     productosPorRubro[rubro].forEach(producto => {
       const option = document.createElement("option");
       option.value = producto;
-      datalist.appendChild(option);
+      option.textContent = producto;
+      select.appendChild(option);
     });
+    // Mostrar el select con todas las opciones al cambiar de rubro
+    select.size = Math.min(5, select.options.length || 1);
+    select.style.display = select.options.length ? 'block' : 'none';
+    // Enfocar el input para que el usuario pueda escribir
+    setTimeout(() => { input.focus(); }, 100);
+  } else {
+    select.style.display = 'none';
   }
 }
+
+// Filtra las opciones del select según lo escrito
+
+function filtrarOpcionesProductoCombo() {
+  const input = document.getElementById("productoComboInput");
+  const select = document.getElementById("productoComboSelect");
+  const rubro = document.getElementById("rubro").value;
+  const texto = input.value.toLowerCase();
+  select.innerHTML = '';
+  if (!rubro || !productosPorRubro[rubro]) {
+    select.style.display = 'none';
+    return;
+  }
+  let encontrados = 0;
+  productosPorRubro[rubro].forEach(producto => {
+    if (!texto || producto.toLowerCase().includes(texto)) {
+      const option = document.createElement("option");
+      option.value = producto;
+      option.textContent = producto;
+      select.appendChild(option);
+      encontrados++;
+    }
+  });
+  select.size = Math.min(5, encontrados || 1);
+  select.style.display = encontrados ? 'block' : 'none';
+}
+
+// Muestra el select al enfocar el input
+function mostrarOpcionesProductoCombo() {
+  const select = document.getElementById("productoComboSelect");
+  if (select.options.length > 0) select.style.display = 'block';
+}
+
+// Oculta el select con un pequeño retraso para permitir el click
+function ocultarOpcionesProductoComboConRetraso() {
+  setTimeout(() => {
+    document.getElementById("productoComboSelect").style.display = 'none';
+  }, 150);
+}
+
+// Al hacer click en una opción del select, ponerla en el input
+function seleccionarOpcionProductoCombo() {
+  const select = document.getElementById("productoComboSelect");
+  const input = document.getElementById("productoComboInput");
+  if (select.selectedIndex >= 0) {
+    input.value = select.options[select.selectedIndex].value;
+    select.style.display = 'none';
+    mostrarStockProductoSeleccionado();
+  }
+}
+
+// Al escribir o seleccionar, mostrar stock
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('productoComboInput').addEventListener('input', mostrarStockProductoSeleccionado);
+  document.getElementById('productoComboInput').addEventListener('change', mostrarStockProductoSeleccionado);
+});
 
 
 
@@ -492,15 +561,14 @@ window.addEventListener('DOMContentLoaded', () => {
     option.textContent = rubro;
     rubroSelect.appendChild(option);
   }
-  // Evento para mostrar stock al cambiar producto
-  document.getElementById('producto').addEventListener('input', mostrarStockProductoSeleccionado);
+  // Ya no existe el campo 'producto', solo el combo
 });
 
 
-// Muestra el stock del producto seleccionado
+// Muestra el stock del producto seleccionado (combo)
 function mostrarStockProductoSeleccionado() {
   const rubro = document.getElementById('rubro').value;
-  const producto = document.getElementById('producto').value;
+  const producto = document.getElementById('productoComboInput').value;
   const infoDiv = document.getElementById('stockProductoInfo');
   if (rubro && producto && productosPorRubro[rubro]?.includes(producto)) {
     const key = rubro + '||' + producto;
@@ -511,63 +579,8 @@ function mostrarStockProductoSeleccionado() {
   }
 }
 
-// Mostrar todos los productos del rubro seleccionado al enfocar el input
-document.getElementById("producto").addEventListener("focus", function() {
-  const rubro = document.getElementById("rubro").value;
-  const datalist = document.getElementById("listaProductos");
-  datalist.innerHTML = '';
-  if (rubro && productosPorRubro[rubro]) {
-    productosPorRubro[rubro].forEach(producto => {
-      const option = document.createElement("option");
-      option.value = producto;
-      datalist.appendChild(option);
-    });
-  }
-  // Mostrar el stock si ya hay un producto seleccionado
-  mostrarStockProductoSeleccionado();
-});
 
-// Evento para filtrar productos mientras se escribe o seleccionar
-document.getElementById("producto").addEventListener("input", function() {
-  const rubro = document.getElementById("rubro").value;
-  const textoBusqueda = this.value.toLowerCase();
-  const datalist = document.getElementById("listaProductos");
-  if (!rubro) {
-    alert("Primero selecciona un rubro");
-    this.value = '';
-    document.getElementById('stockProductoInfo').textContent = '';
-    return;
-  }
-  // Si el campo está vacío, mostrar todos los productos
-  if (!textoBusqueda) {
-    datalist.innerHTML = '';
-    if (productosPorRubro[rubro]) {
-      productosPorRubro[rubro].forEach(producto => {
-        const option = document.createElement("option");
-        option.value = producto;
-        datalist.appendChild(option);
-      });
-    }
-    mostrarStockProductoSeleccionado();
-    return;
-  }
-  // Filtrar productos que coincidan con la búsqueda
-  const productosFiltrados = productosPorRubro[rubro].filter(producto => 
-    producto.toLowerCase().includes(textoBusqueda)
-  );
-  datalist.innerHTML = '';
-  productosFiltrados.forEach(producto => {
-    const option = document.createElement("option");
-    option.value = producto;
-    datalist.appendChild(option);
-  });
-  mostrarStockProductoSeleccionado();
-});
-
-// Mostrar stock también al perder el foco (por si elige con mouse)
-document.getElementById("producto").addEventListener("change", function() {
-  mostrarStockProductoSeleccionado();
-});
+// Ya no existen eventos para el campo 'producto' ni 'listaProductos' (combo reemplaza todo)
 
 
 function filtrarProductosPrincipal() {
@@ -619,23 +632,8 @@ function actualizarProductosStock() {
   document.getElementById('nuevoStock').value = '';
 }
 
-function actualizarProductos() {
-  const rubro = document.getElementById("rubro").value;
-  const productoSelect = document.getElementById("producto");
-  productoSelect.innerHTML = '<option value="">-- Selecciona un producto --</option>';
-  if (productosPorRubro[rubro]) {
-    productosPorRubro[rubro].forEach(producto => {
-      const option = document.createElement("option");
-      option.value = producto;
-      option.textContent = producto;
-      productoSelect.appendChild(option);
-    });
-  }
-  // Limpiar el buscador al cambiar rubro
-  const buscador = document.getElementById('buscadorProducto');
-  if (buscador) buscador.value = '';
-  mostrarStockProductoSeleccionado();
-}
+
+// (Eliminada función duplicada actualizarProductos para evitar error de referencia a 'producto')
 
 
 function mostrarStockActual() {
@@ -809,11 +807,12 @@ function actualizarSelectorPrincipalRubros() {
   }
 }
 
+
 function registrarMovimiento() {
   const tipo = document.getElementById("tipo").value;
   const categoria = document.getElementById("categoria").value;
   const rubro = document.getElementById("rubro").value;
-  const producto = document.getElementById("producto").value;
+  const producto = document.getElementById("productoComboInput").value;
   const cantidad = Number(document.getElementById("cantidad").value);
   const monto = Number(document.getElementById("monto").value);
   const fecha = document.getElementById("fecha").value;
@@ -867,12 +866,12 @@ function registrarMovimiento() {
     document.getElementById("tipo").value = "";
     document.getElementById("categoria").value = "";
     document.getElementById("rubro").value = "";
-    document.getElementById("producto").value = "";
+    document.getElementById("productoComboInput").value = "";
     document.getElementById("cantidad").value = "";
     document.getElementById("monto").value = "";
     document.getElementById("metodoPago").value = "";
     document.getElementById('stockProductoInfo').textContent = '';
-    document.getElementById('listaProductos').innerHTML = '';
+    document.getElementById('productoComboSelect').innerHTML = '';
   };
 
   tx.onerror = function (event) {
@@ -1242,5 +1241,4 @@ function mostrarGestor() {
 
 </body>
 </html>
-
 
