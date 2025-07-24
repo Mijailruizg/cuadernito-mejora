@@ -618,9 +618,9 @@ function mostrarStockActual() {
   document.getElementById('stockActual').value = stockPorProducto[key] || 0;
   document.getElementById('nuevoStock').value = '';
 
-  // Si el formulario principal tiene el mismo rubro y producto, actualizar el stock mostrado ahí también
+  // Si el formulario principal tiene el mismo rubro y producto seleccionado, actualizar el stock mostrado ahí también
   const rubroPrincipal = document.getElementById('rubro').value;
-  const productoPrincipal = document.getElementById('producto').value;
+  const productoPrincipal = document.getElementById('productoSelectorBtnText').textContent;
   if (rubro === rubroPrincipal && producto === productoPrincipal) {
     mostrarStockProductoSeleccionado();
   }
@@ -640,9 +640,9 @@ function guardarStock() {
   localStorage.setItem('stockPorProducto', JSON.stringify(stockPorProducto));
   document.getElementById('stockActual').value = nuevoStock;
 
-  // Si el formulario principal tiene el mismo rubro y producto, actualizar el stock mostrado ahí también
+  // Si el formulario principal tiene el mismo rubro y producto seleccionado, actualizar el stock mostrado ahí también
   const rubroPrincipal = document.getElementById('rubro').value;
-  const productoPrincipal = document.getElementById('producto').value;
+  const productoPrincipal = document.getElementById('productoSelectorBtnText').textContent;
   if (rubro === rubroPrincipal && producto === productoPrincipal) {
     mostrarStockProductoSeleccionado();
   }
