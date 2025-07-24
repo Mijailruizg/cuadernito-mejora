@@ -331,10 +331,17 @@
 
 
 
-<label for="productoCombo">Buscar o seleccionar producto:</label>
-<div style="position:relative; margin-bottom:10px;">
-  <input type="text" id="productoComboInput" placeholder="Buscar producto o selecciona" autocomplete="off" style="width:100%;padding:12px 14px;border:2px solid #b2dfdb;border-radius:10px;font-size:16px;background-color:#f9fdfa;position:relative;z-index:2;" oninput="filtrarOpcionesProductoCombo()" onfocus="mostrarOpcionesProductoCombo()" onblur="ocultarOpcionesProductoComboConRetraso()">
-  <select id="productoComboSelect" size="5" style="display:none;position:absolute;top:44px;left:0;width:100%;z-index:3;background:white;border:2px solid #26a69a;border-radius:0 0 10px 10px;max-height:180px;overflow-y:auto;box-shadow:0 2px 8px rgba(0,0,0,0.08);font-size:16px;" onclick="seleccionarOpcionProductoCombo()"></select>
+
+<label for="productoSelectorBtn">Buscar o seleccionar producto:</label>
+<button id="productoSelectorBtn" type="button" style="width:100%;padding:12px 14px;border:2px solid #b2dfdb;border-radius:10px;font-size:16px;background-color:#f9fdfa;text-align:left;position:relative;margin-bottom:10px;">
+  <span id="productoSelectorBtnText">Selecciona un producto</span>
+</button>
+<div id="productoPanel" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:2000;background:rgba(0,0,0,0.25);align-items:center;justify-content:center;">
+  <div style="background:white;padding:20px 16px 16px 16px;border-radius:14px;max-width:95vw;width:360px;box-shadow:0 4px 24px rgba(0,0,0,0.18);margin:auto;">
+    <input type="text" id="productoPanelInput" placeholder="Buscar producto..." style="width:100%;padding:10px 12px;margin-bottom:10px;border:1.5px solid #b2dfdb;border-radius:8px;font-size:16px;">
+    <div id="productoPanelList" style="max-height:180px;overflow-y:auto;border:1px solid #eee;border-radius:8px;"></div>
+    <button id="productoPanelCerrar" type="button" style="margin-top:10px;width:100%;background:#eee;color:#00796b;font-weight:600;">Cerrar</button>
+  </div>
 </div>
 <div id="stockProductoInfo" style="margin-bottom:10px;color:#00796b;font-weight:bold;"></div>
 
@@ -410,87 +417,109 @@ let stockPorProducto = JSON.parse(localStorage.getItem('stockPorProducto')) || {
     // JavaScript
 
 
-// Combo producto: actualiza las opciones del select según el rubro
 
+// --- NUEVO: Panel flotante para seleccionar/buscar producto ---
 function actualizarProductos() {
-  const rubro = document.getElementById("rubro").value;
-  const input = document.getElementById("productoComboInput");
-  const select = document.getElementById("productoComboSelect");
-  input.value = '';
-  select.innerHTML = '';
+  // Solo limpiar el texto del botón y el input oculto
+  document.getElementById('productoSelectorBtnText').textContent = 'Selecciona un producto';
   document.getElementById('stockProductoInfo').textContent = '';
-  if (rubro && productosPorRubro[rubro]) {
-    productosPorRubro[rubro].forEach(producto => {
-      const option = document.createElement("option");
-      option.value = producto;
-      option.textContent = producto;
-      select.appendChild(option);
-    });
-    // Mostrar el select con todas las opciones al cambiar de rubro
-    select.size = Math.min(5, select.options.length || 1);
-    select.style.display = select.options.length ? 'block' : 'none';
-    // Enfocar el input para que el usuario pueda escribir
-    setTimeout(() => { input.focus(); }, 100);
-  } else {
-    select.style.display = 'none';
-  }
 }
 
-// Filtra las opciones del select según lo escrito
-
-function filtrarOpcionesProductoCombo() {
-  const input = document.getElementById("productoComboInput");
-  const select = document.getElementById("productoComboSelect");
-  const rubro = document.getElementById("rubro").value;
-  const texto = input.value.toLowerCase();
-  select.innerHTML = '';
+function abrirProductoPanel() {
+  const rubro = document.getElementById('rubro').value;
+  const panel = document.getElementById('productoPanel');
+  const input = document.getElementById('productoPanelInput');
+  const list = document.getElementById('productoPanelList');
+  input.value = '';
+  list.innerHTML = '';
   if (!rubro || !productosPorRubro[rubro]) {
-    select.style.display = 'none';
+    list.innerHTML = '<div style="padding:10px;color:#888;">Selecciona primero un rubro</div>';
+  } else {
+    productosPorRubro[rubro].forEach(producto => {
+      const div = document.createElement('div');
+      div.textContent = producto;
+      div.style.padding = '8px 10px';
+      div.style.cursor = 'pointer';
+      div.style.borderBottom = '1px solid #f0f0f0';
+      div.addEventListener('click', function() {
+        seleccionarProductoDesdePanel(producto);
+      });
+      list.appendChild(div);
+    });
+  }
+  panel.style.display = 'flex';
+  setTimeout(() => { input.focus(); }, 100);
+}
+
+function cerrarProductoPanel() {
+  document.getElementById('productoPanel').style.display = 'none';
+}
+
+function filtrarProductosPanel() {
+  const rubro = document.getElementById('rubro').value;
+  const texto = document.getElementById('productoPanelInput').value.toLowerCase();
+  const list = document.getElementById('productoPanelList');
+  list.innerHTML = '';
+  if (!rubro || !productosPorRubro[rubro]) {
+    list.innerHTML = '<div style="padding:10px;color:#888;">Selecciona primero un rubro</div>';
     return;
   }
   let encontrados = 0;
   productosPorRubro[rubro].forEach(producto => {
     if (!texto || producto.toLowerCase().includes(texto)) {
-      const option = document.createElement("option");
-      option.value = producto;
-      option.textContent = producto;
-      select.appendChild(option);
+      const div = document.createElement('div');
+      div.textContent = producto;
+      div.style.padding = '8px 10px';
+      div.style.cursor = 'pointer';
+      div.style.borderBottom = '1px solid #f0f0f0';
+      div.addEventListener('click', function() {
+        seleccionarProductoDesdePanel(producto);
+      });
+      list.appendChild(div);
       encontrados++;
     }
   });
-  select.size = Math.min(5, encontrados || 1);
-  select.style.display = encontrados ? 'block' : 'none';
-}
-
-// Muestra el select al enfocar el input
-function mostrarOpcionesProductoCombo() {
-  const select = document.getElementById("productoComboSelect");
-  if (select.options.length > 0) select.style.display = 'block';
-}
-
-// Oculta el select con un pequeño retraso para permitir el click
-function ocultarOpcionesProductoComboConRetraso() {
-  setTimeout(() => {
-    document.getElementById("productoComboSelect").style.display = 'none';
-  }, 150);
-}
-
-// Al hacer click en una opción del select, ponerla en el input
-function seleccionarOpcionProductoCombo() {
-  const select = document.getElementById("productoComboSelect");
-  const input = document.getElementById("productoComboInput");
-  if (select.selectedIndex >= 0) {
-    input.value = select.options[select.selectedIndex].value;
-    select.style.display = 'none';
-    mostrarStockProductoSeleccionado();
+  if (encontrados === 0) {
+    list.innerHTML = '<div style="padding:10px;color:#888;">No se encontraron productos</div>';
   }
 }
 
-// Al escribir o seleccionar, mostrar stock
-document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('productoComboInput').addEventListener('input', mostrarStockProductoSeleccionado);
-  document.getElementById('productoComboInput').addEventListener('change', mostrarStockProductoSeleccionado);
+function seleccionarProductoDesdePanel(producto) {
+  document.getElementById('productoSelectorBtnText').textContent = producto;
+  cerrarProductoPanel();
+  mostrarStockProductoSeleccionado();
+}
+
+// Al cambiar rubro, limpiar selección de producto
+document.getElementById('rubro').addEventListener('change', actualizarProductos);
+
+// Abrir panel al tocar el botón
+document.getElementById('productoSelectorBtn').addEventListener('click', abrirProductoPanel);
+
+// Cerrar panel
+document.getElementById('productoPanelCerrar').addEventListener('click', cerrarProductoPanel);
+
+// Filtrar productos al escribir
+document.getElementById('productoPanelInput').addEventListener('input', filtrarProductosPanel);
+
+// Cerrar panel al hacer click fuera del panel
+document.getElementById('productoPanel').addEventListener('click', function(e) {
+  if (e.target === this) cerrarProductoPanel();
 });
+
+// Mostrar stock al seleccionar producto
+function mostrarStockProductoSeleccionado() {
+  const rubro = document.getElementById('rubro').value;
+  const producto = document.getElementById('productoSelectorBtnText').textContent;
+  const infoDiv = document.getElementById('stockProductoInfo');
+  if (rubro && producto && productosPorRubro[rubro]?.includes(producto)) {
+    const key = rubro + '||' + producto;
+    const stock = stockPorProducto[key] !== undefined ? stockPorProducto[key] : 0;
+    infoDiv.textContent = `Stock actual: ${stock}`;
+  } else {
+    infoDiv.textContent = '';
+  }
+}
 
 
 
@@ -755,18 +784,19 @@ function actualizarSelectorPrincipalRubros() {
 }
 
 
+
 function registrarMovimiento() {
   const tipo = document.getElementById("tipo").value;
   const categoria = document.getElementById("categoria").value;
   const rubro = document.getElementById("rubro").value;
-  const producto = document.getElementById("productoComboInput").value;
+  const producto = document.getElementById("productoSelectorBtnText").textContent;
   const cantidad = Number(document.getElementById("cantidad").value);
   const monto = Number(document.getElementById("monto").value);
   const fecha = document.getElementById("fecha").value;
   const metodoPago = document.getElementById("metodoPago").value;
 
   // Validar que el producto exista en el rubro seleccionado
-  if (!tipo || !categoria || !rubro || !producto || !fecha || !metodoPago) {
+  if (!tipo || !categoria || !rubro || !producto || producto === 'Selecciona un producto' || !fecha || !metodoPago) {
     alert("Por favor, completa todos los campos correctamente");
     return;
   } else if (!productosPorRubro[rubro] || !productosPorRubro[rubro].includes(producto)) {
@@ -813,12 +843,11 @@ function registrarMovimiento() {
     document.getElementById("tipo").value = "";
     document.getElementById("categoria").value = "";
     document.getElementById("rubro").value = "";
-    document.getElementById("productoComboInput").value = "";
+    document.getElementById("productoSelectorBtnText").textContent = "Selecciona un producto";
     document.getElementById("cantidad").value = "";
     document.getElementById("monto").value = "";
     document.getElementById("metodoPago").value = "";
     document.getElementById('stockProductoInfo').textContent = '';
-    document.getElementById('productoComboSelect').innerHTML = '';
   };
 
   tx.onerror = function (event) {
