@@ -246,46 +246,8 @@
 </script>
 </head>
 <body>
-<!-- Botón flotante para gestión de rubros -->
-<button class="floating-rubro-btn" onclick="toggleRubroMenu()">≡</button>
 
 
-<!-- Menú de gestión de rubros -->
-<div class="rubro-menu" id="rubroMenu">
-  <h3>Gestión de Rubros</h3>
-  <input type="text" id="nuevoRubro" placeholder="Nuevo rubro">
-  <button onclick="agregarRubro()">Añadir Rubro</button>
-  
-  <select id="rubroAEliminar">
-    <option value="">Selecciona rubro a eliminar</option>
-  </select>
-  <button onclick="eliminarRubro()">Eliminar Rubro</button>
-  
-  <select id="rubroProducto">
-    <option value="">Selecciona rubro para producto</option>
-  </select>
-  <input type="text" id="nuevoProducto" placeholder="Nuevo producto">
-  <button onclick="agregarProducto()">Añadir Producto</button>
-</div>
-
-<!-- Burbuja flotante para edición rápida de stock -->
-<button class="floating-rubro-btn" id="stockQuickBtn" style="top: 40px; left: 20px; background-color: #00796b; color: #004d40; font-size: 22px;" onclick="toggleStockMenu()">≡</button>
-<div class="rubro-menu" id="stockMenu" style="z-index:1001; left:90px; right:auto; top:30px;">
-  <h3>Editar Stock Rápido</h3>
-  <label for="stockRubro">Seleccionar rubro:</label>
-  <select id="stockRubro" onchange="actualizarProductosStock()">
-    <option value="">-- Selecciona un rubro --</option>
-  </select>
-  <label for="stockProducto">Seleccionar producto:</label>
-  <select id="stockProducto" onchange="mostrarStockActual()">
-    <option value="">-- Selecciona un producto --</option>
-  </select>
-  <label for="stockActual">Cantidad de stock actual:</label>
-  <input type="number" id="stockActual" readonly style="background:#eee;">
-  <label for="nuevoStock">Nuevo stock:</label>
-  <input type="number" id="nuevoStock" min="0">
-  <button onclick="guardarStock()">Guardar Stock</button>
-</div>
 
 
   
@@ -389,6 +351,48 @@
         <option value="manual_uso_app.html">Manual de uso App</option>
         <option value="manual_contable.html">Manual Contable</option>
       </select>
+    </div>
+
+    <!-- Paneles fijos para gestión de rubros y stock -->
+    <div class="manual-selector">
+      <label for="panelGestion">Selecciona:</label>
+      <select id="panelGestion" onchange="mostrarPanelGestion()">
+        <option value="">-- Elige una opción --</option>
+        <option value="rubro">Gestión de Rubros</option>
+        <option value="stock">Editar Stock Rápido</option>
+      </select>
+    </div>
+
+    <div id="panelRubro" style="display:none; margin-top:20px;">
+      <h3>Gestión de Rubros</h3>
+      <input type="text" id="nuevoRubro" placeholder="Nuevo rubro">
+      <button onclick="agregarRubro()">Añadir Rubro</button>
+      <select id="rubroAEliminar">
+        <option value="">Selecciona rubro a eliminar</option>
+      </select>
+      <button onclick="eliminarRubro()">Eliminar Rubro</button>
+      <select id="rubroProducto">
+        <option value="">Selecciona rubro para producto</option>
+      </select>
+      <input type="text" id="nuevoProducto" placeholder="Nuevo producto">
+      <button onclick="agregarProducto()">Añadir Producto</button>
+    </div>
+
+    <div id="panelStock" style="display:none; margin-top:20px;">
+      <h3>Editar Stock Rápido</h3>
+      <label for="stockRubro">Seleccionar rubro:</label>
+      <select id="stockRubro" onchange="actualizarProductosStock()">
+        <option value="">-- Selecciona un rubro --</option>
+      </select>
+      <label for="stockProducto">Seleccionar producto:</label>
+      <select id="stockProducto" onchange="mostrarStockActual()">
+        <option value="">-- Selecciona un producto --</option>
+      </select>
+      <label for="stockActual">Cantidad de stock actual:</label>
+      <input type="number" id="stockActual" readonly style="background:#eee;">
+      <label for="nuevoStock">Nuevo stock:</label>
+      <input type="number" id="nuevoStock" min="0">
+      <button onclick="guardarStock()">Guardar Stock</button>
     </div>
 
     <div id="reporte"></div>
@@ -1059,16 +1063,18 @@ async function exportarGestorAPdf() {
 
 
 
-// Función para mostrar/ocultar el menú de rubros
-function toggleRubroMenu() {
-  const menu = document.getElementById('rubroMenu');
-  menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-  // Actualizar los selectores cuando se abre el menú
-  if (menu.style.display === 'block') {
+
+// Función para mostrar el panel de gestión seleccionado
+function mostrarPanelGestion() {
+  const valor = document.getElementById('panelGestion').value;
+  document.getElementById('panelRubro').style.display = valor === 'rubro' ? 'block' : 'none';
+  document.getElementById('panelStock').style.display = valor === 'stock' ? 'block' : 'none';
+  if (valor === 'rubro') {
     actualizarSelectoresRubros();
   }
-  // Ocultar menú de stock si está abierto
-  document.getElementById('stockMenu').style.display = 'none';
+  if (valor === 'stock') {
+    actualizarStockRubros();
+  }
 }
 
 // Actualizar los selectores de rubros
