@@ -345,23 +345,24 @@
 
     
     <div class="manual-selector">
-      <label for="manuales">Seleccionar Manual:</label>
-      <select id="manuales" onchange="abrirManual()">
-        <option value="">-- Elige un manual --</option>
-        <option value="manual_uso_app.html">Manual de uso App</option>
-        <option value="manual_contable.html">Manual Contable</option>
-      </select>
-    </div>
+      <!-- Paneles fijos para gestión de rubros y stock -->
+      <div class="manual-selector">
+        <label for="panelGestion">Selecciona Editar Stock o Editor de rubro:</label>
+        <select id="panelGestion" onchange="mostrarPanelGestion()">
+          <option value="">-- Elige una opción --</option>
+          <option value="rubro">Editor de Rubros</option>
+          <option value="stock">Editar Stock </option>
+        </select>
+      </div>
 
-    <!-- Paneles fijos para gestión de rubros y stock -->
-    <div class="manual-selector">
-      <label for="panelGestion">Selecciona:</label>
-      <select id="panelGestion" onchange="mostrarPanelGestion()">
-        <option value="">-- Elige una opción --</option>
-        <option value="rubro">Gestión de Rubros</option>
-        <option value="stock">Editar Stock Rápido</option>
-      </select>
-    </div>
+      <div class="manual-selector">
+        <label for="manuales">Seleccionar Manual:</label>
+        <select id="manuales" onchange="abrirManual()">
+          <option value="">-- Elige un manual --</option>
+          <option value="manual_uso_app.html">Manual de uso App</option>
+          <option value="manual_contable.html">Manual Contable</option>
+        </select>
+      </div>
 
     <div id="panelRubro" style="display:none; margin-top:20px;">
       <h3>Gestión de Rubros</h3>
