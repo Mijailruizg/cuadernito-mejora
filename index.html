@@ -188,7 +188,7 @@
   border: 1px solid #ccc;
   border-radius: 12px;
   box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-  z-index: 1101;
+  z-index: 1200; /* <-- Subido para estar siempre encima */
   min-width: 210px;
   flex-direction: column;
   padding: 10px 0;
@@ -206,6 +206,33 @@
 }
 .floating-menu-dropdown button:hover {
   background: #e0f2f1;
+}
+
+/* Fondo blanco y sombra solo en el contorno del panel flotante */
+.rubro-menu-inner {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+  padding: 22px 18px 18px 18px;
+  position: relative;
+}
+
+/* Botón X para cerrar */
+.rubro-menu-close {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #00796b;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 2;
+  transition: color 0.2s;
+}
+.rubro-menu-close:hover {
+  color: #d32f2f;
 }
 
 /* Ajusta los paneles para que no se superpongan */
@@ -233,46 +260,7 @@
 </script>
 </head>
 <body>
-<!-- Botón flotante para gestión de rubros -->
-<!-- <button class="floating-rubro-btn" onclick="toggleRubroMenu()">≡</button> -->
 
-
-<!-- Menú de gestión de rubros -->
-<!-- <div class="rubro-menu" id="rubroMenu">
-  <h3>Gestión de Rubros</h3>
-  <input type="text" id="nuevoRubro" placeholder="Nuevo rubro">
-  <button onclick="agregarRubro()">Añadir Rubro</button>
-  
-  <select id="rubroAEliminar">
-    <option value="">Selecciona rubro a eliminar</option>
-  </select>
-  <button onclick="eliminarRubro()">Eliminar Rubro</button>
-  
-  <select id="rubroProducto">
-    <option value="">Selecciona rubro para producto</option>
-  </select>
-  <input type="text" id="nuevoProducto" placeholder="Nuevo producto">
-  <button onclick="agregarProducto()">Añadir Producto</button>
-</div> -->
-
-<!-- Burbuja flotante para edición rápida de stock -->
-<!-- <button class="floating-rubro-btn" id="stockQuickBtn" style="top: 40px; left: 20px; background-color: #00796b; color: #ffffff; font-size: 22px;" onclick="toggleStockMenu()">≡</button>
-<div class="rubro-menu" id="stockMenu" style="z-index:1001; left:90px; right:auto; top:30px;">
-  <h3>Editar Stock Rápido</h3>
-  <label for="stockRubro">Seleccionar rubro:</label>
-  <select id="stockRubro" onchange="actualizarProductosStock()">
-    <option value="">-- Selecciona un rubro --</option>
-  </select>
-  <label for="stockProducto">Seleccionar producto:</label>
-  <select id="stockProducto" onchange="mostrarStockActual()">
-    <option value="">-- Selecciona un producto --</option>
-  </select>
-  <label for="stockActual">Cantidad de stock actual:</label>
-  <input type="number" id="stockActual" readonly style="background:#eee;">
-  <label for="nuevoStock">Nuevo stock:</label>
-  <input type="number" id="nuevoStock" min="0">
-  <button onclick="guardarStock()">Guardar Stock</button>
-</div> -->
 
 <!-- NUEVA BURBUJA FLOTANTE CON MENÚ DE 3 PUNTOS -->
 <button class="floating-menu-btn" id="mainFloatingMenuBtn" onclick="toggleFloatingMenu()">⋮</button>
@@ -287,36 +275,42 @@
 
 <!-- Panel de Gestión de Rubros -->
 <div class="rubro-menu" id="rubroMenu" style="display:none;">
-  <h3>Gestión de Rubros</h3>
-  <input type="text" id="nuevoRubro" placeholder="Nuevo rubro">
-  <button onclick="agregarRubro()">Añadir Rubro</button>
-  <select id="rubroAEliminar">
-    <option value="">Selecciona rubro a eliminar</option>
-  </select>
-  <button onclick="eliminarRubro()">Eliminar Rubro</button>
-  <select id="rubroProducto">
-    <option value="">Selecciona rubro para producto</option>
-  </select>
-  <input type="text" id="nuevoProducto" placeholder="Nuevo producto">
-  <button onclick="agregarProducto()">Añadir Producto</button>
+  <div class="rubro-menu-inner">
+    <!-- <button class="rubro-menu-close" onclick="cerrarPanel('rubros')" title="Cerrar">×</button> -->
+    <h3>Gestión de Rubros</h3>
+    <input type="text" id="nuevoRubro" placeholder="Nuevo rubro">
+    <button onclick="agregarRubro()">Añadir Rubro</button>
+    <select id="rubroAEliminar">
+      <option value="">Selecciona rubro a eliminar</option>
+    </select>
+    <button onclick="eliminarRubro()">Eliminar Rubro</button>
+    <select id="rubroProducto">
+      <option value="">Selecciona rubro para producto</option>
+    </select>
+    <input type="text" id="nuevoProducto" placeholder="Nuevo producto">
+    <button onclick="agregarProducto()">Añadir Producto</button>
+  </div>
 </div>
 
 <!-- Panel de Editar Stock Rápido -->
 <div class="rubro-menu" id="stockMenu" style="display:none;z-index:1001;left:auto;right:20px;top:140px;">
-  <h3>Editar Stock Rápido</h3>
-  <label for="stockRubro">Seleccionar rubro:</label>
-  <select id="stockRubro" onchange="actualizarProductosStock()">
-    <option value="">-- Selecciona un rubro --</option>
-  </select>
-  <label for="stockProducto">Seleccionar producto:</label>
-  <select id="stockProducto" onchange="mostrarStockActual()">
-    <option value="">-- Selecciona un producto --</option>
-  </select>
-  <label for="stockActual">Cantidad de stock actual:</label>
-  <input type="number" id="stockActual" readonly style="background:#eee;">
-  <label for="nuevoStock">Nuevo stock:</label>
-  <input type="number" id="nuevoStock" min="0">
-  <button onclick="guardarStock()">Guardar Stock</button>
+  <div class="rubro-menu-inner">
+    <!-- <button class="rubro-menu-close" onclick="cerrarPanel('stock')" title="Cerrar">×</button> -->
+    <h3>Editar Stock Rápido</h3>
+    <label for="stockRubro">Seleccionar rubro:</label>
+    <select id="stockRubro" onchange="actualizarProductosStock()">
+      <option value="">-- Selecciona un rubro --</option>
+    </select>
+    <label for="stockProducto">Seleccionar producto:</label>
+    <select id="stockProducto" onchange="mostrarStockActual()">
+      <option value="">-- Selecciona un producto --</option>
+    </select>
+    <label for="stockActual">Cantidad de stock actual:</label>
+    <input type="number" id="stockActual" readonly style="background:#eee;">
+    <label for="nuevoStock">Nuevo stock:</label>
+    <input type="number" id="nuevoStock" min="0">
+    <button onclick="guardarStock()">Guardar Stock</button>
+  </div>
 </div>
 
 
@@ -368,7 +362,7 @@
 <button id="productoSelectorBtn" type="button" style="width:100%;padding:12px 14px;border:2px solid #b2dfdb;border-radius:10px;font-size:16px;background-color:#f9fdfa;text-align:left;position:relative;margin-bottom:10px;">
   <span id="productoSelectorBtnText" style="color:#2e3d49;font-family:'Poppins',sans-serif;font-size:16px;font-weight:400;">Selecciona un producto</span>
 </button>
-<div id="productoPanel" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:2000;background:rgba(0,0,0,0.25);align-items:center;justify-content:center;">
+<div id="productoPanel" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:1090;background:rgba(0,0,0,0.25);align-items:center;justify-content:center;">
   <div style="background:white;padding:20px 16px 16px 16px;border-radius:14px;max-width:95vw;width:360px;box-shadow:0 4px 24px rgba(0,0,0,0.18);margin:auto;">
     <input type="text" id="productoPanelInput" placeholder="Buscar producto..." style="width:100%;padding:10px 12px;margin-bottom:10px;border:1.5px solid #b2dfdb;border-radius:8px;font-size:16px;">
     <div id="productoPanelList" style="max-height:180px;overflow-y:auto;border:1px solid #eee;border-radius:8px;"></div>
@@ -1086,44 +1080,108 @@ async function exportarGestorAPdf() {
 
 
 
-    // NUEVA FUNCIÓN: Exportar movimientos a Excel
-    function exportarMovimientosExcel() {
-      // Obtener los datos de IndexedDB
-      const request = db.transaction(["movimientos"], "readonly").objectStore("movimientos").getAll();
-      request.onsuccess = function() {
-        const movimientos = request.result;
-        if (!movimientos.length) {
-          alert("No hay movimientos registrados para exportar.");
-          return;
-        }
-        // Encabezados
-        const data = [
-          ["Fecha", "Hora", "Tipo", "Categoría", "Rubro", "Producto", "Cantidad", "Monto (Bs)", "Método de Pago"]
-        ];
-        movimientos.forEach(mov => {
-          data.push([
-            mov.fecha || "",
-            mov.hora || "",
-            mov.tipo ? mov.tipo.charAt(0).toUpperCase() + mov.tipo.slice(1) : "",
-            mov.categoria || "",
-            mov.rubro || "",
-            mov.producto || "",
-            mov.cantidad !== undefined ? mov.cantidad : "",
-            mov.monto !== undefined ? mov.monto : "",
-            mov.metodoPago || ""
-          ]);
-        });
-        // Crear hoja y libro
-        const ws = XLSX.utils.aoa_to_sheet(data);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Movimientos");
-        // Descargar
-        XLSX.writeFile(wb, "movimientos_cuadernito.xlsx");
-      };
-      request.onerror = function() {
-        alert("Error al exportar los movimientos.");
-      };
+    // NUEVA FUNCIÓN: Exportar movimientos a Excel (mejorada con estilos y ancho de columnas)
+function exportarMovimientosExcel() {
+  // Obtener los datos de IndexedDB
+  const request = db.transaction(["movimientos"], "readonly").objectStore("movimientos").getAll();
+  request.onsuccess = function() {
+    const movimientos = request.result;
+    if (!movimientos.length) {
+      alert("No hay movimientos registrados para exportar.");
+      return;
     }
+    // Encabezados
+    const data = [
+      ["Fecha", "Hora", "Tipo", "Categoría", "Rubro", "Producto", "Cantidad", "Monto (Bs)", "Método de Pago"]
+    ];
+    movimientos.forEach(mov => {
+      data.push([
+        mov.fecha || "",
+        mov.hora || "",
+        mov.tipo ? mov.tipo.charAt(0).toUpperCase() + mov.tipo.slice(1) : "",
+        mov.categoria || "",
+        mov.rubro || "",
+        mov.producto || "",
+        mov.cantidad !== undefined ? mov.cantidad : "",
+        mov.monto !== undefined ? mov.monto : "",
+        mov.metodoPago || ""
+      ]);
+    });
+    // Crear hoja y libro
+    const ws = XLSX.utils.aoa_to_sheet(data);
+
+    // Ajustar ancho de columnas
+    ws['!cols'] = [
+      { wch: 12 },
+      { wch: 8 }, 
+      { wch: 10 },
+      { wch: 18 },
+      { wch: 22 }, 
+      { wch: 28 },
+      { wch: 10 }, 
+      { wch: 14 },
+      { wch: 16 }  
+    ];
+
+    // Colores para las columnas (puedes personalizar los colores aquí)
+    const columnColors = [
+      "B2DFDB",
+      "FFECB3",
+      "C8E6C9",
+      "FFE0B2", 
+      "D1C4E9",
+      "BBDEFB", 
+      "F8BBD0", 
+      "FFF9C4", 
+      "B3E5FC"  
+    ];
+
+ 
+    for (let C = 0; C < data[0].length; ++C) {
+      const cell = ws[XLSX.utils.encode_cell({ r: 0, c: C })];
+      if (cell) {
+        cell.s = {
+          fill: { fgColor: { rgb: columnColors[C] } },
+          font: { bold: true, color: { rgb: "2E3D49" }, sz: 13 },
+          alignment: { horizontal: "center", vertical: "center" }
+        };
+      }
+    }
+
+    // Aplicar color de fondo a cada columna de las filas de datos
+    for (let R = 1; R < data.length; ++R) {
+      for (let C = 0; C < data[0].length; ++C) {
+        const cell = ws[XLSX.utils.encode_cell({ r: R, c: C })];
+        if (cell) {
+          cell.s = {
+            border: {
+              top: { style: "thin", color: { rgb: "CCCCCC" } },
+              bottom: { style: "thin", color: { rgb: "CCCCCC" } },
+              left: { style: "thin", color: { rgb: "CCCCCC" } },
+              right: { style: "thin", color: { rgb: "CCCCCC" } }
+            },
+            alignment: { vertical: "center" },
+            fill: { fgColor: { rgb: columnColors[C] } }
+          };
+        }
+      }
+    }
+
+    // Crear libro y exportar
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Movimientos");
+
+    // Habilitar estilos (solo funciona en XLSX, no CSV)
+    if (typeof XLSX.writeFileXLSX !== "undefined") {
+      XLSX.writeFileXLSX(wb, "movimientos_cuadernito.xlsx", { cellStyles: true });
+    } else {
+      XLSX.writeFile(wb, "movimientos_cuadernito.xlsx", { cellStyles: true });
+    }
+  };
+  request.onerror = function() {
+    alert("Error al exportar los movimientos.");
+  };
+}
 
 // Función para mostrar/ocultar el menú de rubros
 function toggleRubroMenu() {
