@@ -155,82 +155,68 @@
       letter-spacing: 1.5px;
     }
 
-    .floating-rubro-btn {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background-color: #00796b;
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 56px;
-      height: 56px;
-      font-size: 28px;
-      cursor: pointer;
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
-      z-index: 1000;
-      transition: transform 0.2s ease;
-    }
+    /* NUEVO ESTILO PARA LA BURBUJA Y MENÚ */
+.floating-menu-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #00796b;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  font-size: 32px;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.2s;
+}
+.floating-menu-btn:hover {
+  background: #004d40;
+  transform: scale(1.08);
+}
+.floating-menu-dropdown {
+  display: none;
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  z-index: 1101;
+  min-width: 210px;
+  flex-direction: column;
+  padding: 10px 0;
+}
+.floating-menu-dropdown button {
+  background: none;
+  border: none;
+  color: #00796b;
+  font-size: 17px;
+  padding: 12px 24px;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.floating-menu-dropdown button:hover {
+  background: #e0f2f1;
+}
 
-    .floating-rubro-btn:hover {
-      background-color: #004d40;
-      transform: scale(1.1);
-    }
-
-    .rubro-menu {
-      position: fixed;
-      top: 90px;
-      right: 20px;
-      width: 300px;
-      background: white;
-      border: 1px solid #ccc;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-      z-index: 1000;
-      display: none;
-    }
-
-    .rubro-menu h3 {
-      margin-top: 0;
-      font-weight: 600;
-      color: #00796b;
-      text-align: center;
-      margin-bottom: 15px;
-    }
-
-    .rubro-menu input, .rubro-menu select {
-      margin-bottom: 10px;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      width: 100%;
-    }
-
-    .rubro-menu button {
-      margin-top: 6px;
-      background-color: #004d40;
-    }
-
-    .manual-selector {
-      margin-top: 30px;
-      border-top: 1px solid #ccc;
-      padding-top: 20px;
-    }
-
-    .manual-selector label {
-      margin-bottom: 8px;
-      display: block;
-      font-weight: 500;
-    }
-
-    .manual-selector select {
-      background-color: #e8f5e9;
-      font-weight: 600;
-      border-radius: 6px;
-    }
-
-
+/* Ajusta los paneles para que no se superpongan */
+.rubro-menu {
+  position: fixed;
+  right: 20px;
+  top: 140px;
+  width: 300px;
+  display: none;
+  z-index: 1102;
+}
   </style>
 
 
@@ -238,6 +224,7 @@
 <!-- Cambia la forma de cargar las bibliotecas -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
   // Espera a que todo esté cargado
   document.addEventListener('DOMContentLoaded', function() {
@@ -247,11 +234,11 @@
 </head>
 <body>
 <!-- Botón flotante para gestión de rubros -->
-<button class="floating-rubro-btn" onclick="toggleRubroMenu()">≡</button>
+<!-- <button class="floating-rubro-btn" onclick="toggleRubroMenu()">≡</button> -->
 
 
 <!-- Menú de gestión de rubros -->
-<div class="rubro-menu" id="rubroMenu">
+<!-- <div class="rubro-menu" id="rubroMenu">
   <h3>Gestión de Rubros</h3>
   <input type="text" id="nuevoRubro" placeholder="Nuevo rubro">
   <button onclick="agregarRubro()">Añadir Rubro</button>
@@ -266,11 +253,56 @@
   </select>
   <input type="text" id="nuevoProducto" placeholder="Nuevo producto">
   <button onclick="agregarProducto()">Añadir Producto</button>
-</div>
+</div> -->
 
 <!-- Burbuja flotante para edición rápida de stock -->
-<button class="floating-rubro-btn" id="stockQuickBtn" style="top: 40px; left: 20px; background-color: #00796b; color: #ffffff; font-size: 22px;" onclick="toggleStockMenu()">≡</button>
+<!-- <button class="floating-rubro-btn" id="stockQuickBtn" style="top: 40px; left: 20px; background-color: #00796b; color: #ffffff; font-size: 22px;" onclick="toggleStockMenu()">≡</button>
 <div class="rubro-menu" id="stockMenu" style="z-index:1001; left:90px; right:auto; top:30px;">
+  <h3>Editar Stock Rápido</h3>
+  <label for="stockRubro">Seleccionar rubro:</label>
+  <select id="stockRubro" onchange="actualizarProductosStock()">
+    <option value="">-- Selecciona un rubro --</option>
+  </select>
+  <label for="stockProducto">Seleccionar producto:</label>
+  <select id="stockProducto" onchange="mostrarStockActual()">
+    <option value="">-- Selecciona un producto --</option>
+  </select>
+  <label for="stockActual">Cantidad de stock actual:</label>
+  <input type="number" id="stockActual" readonly style="background:#eee;">
+  <label for="nuevoStock">Nuevo stock:</label>
+  <input type="number" id="nuevoStock" min="0">
+  <button onclick="guardarStock()">Guardar Stock</button>
+</div> -->
+
+<!-- NUEVA BURBUJA FLOTANTE CON MENÚ DE 3 PUNTOS -->
+<button class="floating-menu-btn" id="mainFloatingMenuBtn" onclick="toggleFloatingMenu()">⋮</button>
+<div class="floating-menu-dropdown" id="mainFloatingMenuDropdown">
+  <button onclick="abrirPanel('rubros')">Gestión de Rubros</button>
+  <button onclick="abrirPanel('stock')">Editar Stock Rápido</button>
+  <label for="importarExcelInput" style="padding: 12px 24px; color: #00796b; font-size: 17px; cursor:pointer; width:100%; text-align:left;">
+    Importar desde Excel
+    <input type="file" id="importarExcelInput" accept=".xlsx,.xls" style="display:none;">
+  </label>
+</div>
+
+<!-- Panel de Gestión de Rubros -->
+<div class="rubro-menu" id="rubroMenu" style="display:none;">
+  <h3>Gestión de Rubros</h3>
+  <input type="text" id="nuevoRubro" placeholder="Nuevo rubro">
+  <button onclick="agregarRubro()">Añadir Rubro</button>
+  <select id="rubroAEliminar">
+    <option value="">Selecciona rubro a eliminar</option>
+  </select>
+  <button onclick="eliminarRubro()">Eliminar Rubro</button>
+  <select id="rubroProducto">
+    <option value="">Selecciona rubro para producto</option>
+  </select>
+  <input type="text" id="nuevoProducto" placeholder="Nuevo producto">
+  <button onclick="agregarProducto()">Añadir Producto</button>
+</div>
+
+<!-- Panel de Editar Stock Rápido -->
+<div class="rubro-menu" id="stockMenu" style="display:none;z-index:1001;left:auto;right:20px;top:140px;">
   <h3>Editar Stock Rápido</h3>
   <label for="stockRubro">Seleccionar rubro:</label>
   <select id="stockRubro" onchange="actualizarProductosStock()">
@@ -302,8 +334,8 @@
 <div id="cuadernito" class="container">
   <h1 style="margin: 0;">Cuadernito Digital</h1>
   <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px;">
-  <img src="https://unifranz.edu.bo/wp-content/themes/unifranz/dist/images/logo_583717f4.png "" alt="Logo"
-  style="height: 58px; width: 58px; object-fit: cover; border-radius: 50%; border: 2px solid #00796b; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
+  <img src="unifranz.png" alt="Logo"
+  style="height: 50px; width: 50px; object-fit: contain; background: #fff; border-radius: 50%; border: 2px solid #00796b; box-shadow: 0 3px 10px rgba(0,0,0,0.18); padding: 2px;">
 </div>
     
     <label for="tipo"></label>
@@ -377,7 +409,7 @@
     <button onclick="mostrarGestor()">Movimiento Detallado</button>
   
   
-<button onclick="exportarGestorAPdf()">Exportar a PDF</button>
+<button onclick="exportarMovimientosExcel()">Exportar a Excel</button>
 
 
 
@@ -536,23 +568,20 @@ function mostrarStockProductoSeleccionado() {
 
 
 
-// Inicialización al cargar la página
-window.addEventListener('DOMContentLoaded', () => {
-  // Llenar el selector de rubros
-  const rubroSelect = document.getElementById('rubro');
-  rubroSelect.innerHTML = '<option value="">-- Selecciona un rubro --</option>';
-  for (const rubro in productosPorRubro) {
-    const option = document.createElement('option');
-    option.value = rubro;
-    option.textContent = rubro;
-    rubroSelect.appendChild(option);
-  }
-  // Ya no existe el campo 'producto', solo el combo
-});
-
-
-
-// (Eliminada función duplicada mostrarStockProductoSeleccionado)
+    // Inicialización al cargar la página
+    window.addEventListener('DOMContentLoaded', () => {
+      // Llenar el selector de rubros
+      const rubroSelect = document.getElementById('rubro');
+      rubroSelect.innerHTML = '<option value="">-- Selecciona un rubro --</option>';
+      for (const rubro in productosPorRubro) {
+        const option = document.createElement('option');
+        option.value = rubro;
+        option.textContent = rubro;
+        rubroSelect.appendChild(option);
+      }
+      // Ya no existe el campo 'producto', solo el combo
+    });
+    
 
 
 // Ya no existen eventos para el campo 'producto' ni 'listaProductos' (combo reemplaza todo)
@@ -589,26 +618,23 @@ function filtrarProductosPrincipal() {
       actualizarProductosStock();
     }
 
-// Llena el selector de productos en el menú de stock rápido según el rubro seleccionado
-function actualizarProductosStock() {
-  const rubro = document.getElementById('stockRubro').value;
-  const productoSelect = document.getElementById('stockProducto');
-  productoSelect.innerHTML = '<option value="">-- Selecciona un producto --</option>';
-  if (productosPorRubro[rubro]) {
-    productosPorRubro[rubro].forEach(producto => {
-      const option = document.createElement('option');
-      option.value = producto;
-      option.textContent = producto;
-      productoSelect.appendChild(option);
-    });
-  }
-  // Limpiar campos de stock al cambiar rubro
-  document.getElementById('stockActual').value = '';
-  document.getElementById('nuevoStock').value = '';
-}
-
-
-// (Eliminada función duplicada actualizarProductos para evitar error de referencia a 'producto')
+    // Llena el selector de productos en el menú de stock rápido según el rubro seleccionado
+    function actualizarProductosStock() {
+      const rubro = document.getElementById('stockRubro').value;
+      const productoSelect = document.getElementById('stockProducto');
+      productoSelect.innerHTML = '<option value="">-- Selecciona un producto --</option>';
+      if (productosPorRubro[rubro]) {
+        productosPorRubro[rubro].forEach(producto => {
+          const option = document.createElement('option');
+          option.value = producto;
+          option.textContent = producto;
+          productoSelect.appendChild(option);
+        });
+      }
+      // Limpiar campos de stock al cambiar rubro
+      document.getElementById('stockActual').value = '';
+      document.getElementById('nuevoStock').value = '';
+    }
 
 
 function mostrarStockActual() {
@@ -944,6 +970,7 @@ function registrarMovimiento() {
     }
       
 
+
 async function exportarGestorAPdf() {
   try {
     // Verificar si jsPDF está disponible
@@ -1058,6 +1085,45 @@ async function exportarGestorAPdf() {
 }
 
 
+
+    // NUEVA FUNCIÓN: Exportar movimientos a Excel
+    function exportarMovimientosExcel() {
+      // Obtener los datos de IndexedDB
+      const request = db.transaction(["movimientos"], "readonly").objectStore("movimientos").getAll();
+      request.onsuccess = function() {
+        const movimientos = request.result;
+        if (!movimientos.length) {
+          alert("No hay movimientos registrados para exportar.");
+          return;
+        }
+        // Encabezados
+        const data = [
+          ["Fecha", "Hora", "Tipo", "Categoría", "Rubro", "Producto", "Cantidad", "Monto (Bs)", "Método de Pago"]
+        ];
+        movimientos.forEach(mov => {
+          data.push([
+            mov.fecha || "",
+            mov.hora || "",
+            mov.tipo ? mov.tipo.charAt(0).toUpperCase() + mov.tipo.slice(1) : "",
+            mov.categoria || "",
+            mov.rubro || "",
+            mov.producto || "",
+            mov.cantidad !== undefined ? mov.cantidad : "",
+            mov.monto !== undefined ? mov.monto : "",
+            mov.metodoPago || ""
+          ]);
+        });
+        // Crear hoja y libro
+        const ws = XLSX.utils.aoa_to_sheet(data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Movimientos");
+        // Descargar
+        XLSX.writeFile(wb, "movimientos_cuadernito.xlsx");
+      };
+      request.onerror = function() {
+        alert("Error al exportar los movimientos.");
+      };
+    }
 
 // Función para mostrar/ocultar el menú de rubros
 function toggleRubroMenu() {
@@ -1190,30 +1256,109 @@ function agregarProducto() {
     alert('Selecciona un rubro y escribe un nombre de producto');
   }
 }
-<!-- Agregado: Mostrar hora en Movimiento Detallado -->
-function mostrarGestor() {
-  const lista = document.getElementById("lista");
-  lista.innerHTML = "";
 
-  const tx = db.transaction(["movimientos"], "readonly");
-  const store = tx.objectStore("movimientos");
-  const request = store.openCursor();
-
-  request.onsuccess = function (event) {
-    const cursor = event.target.result;
-    if (cursor) {
-      const d = cursor.value;
-      const li = document.createElement("li");
-      li.innerText = `${d.fecha} ${d.hora || ''} - ${d.tipo.toUpperCase()} Bs ${d.monto} (${d.producto}) - ${d.categoria} - Cantidad: ${d.cantidad}`;
-      lista.appendChild(li);
-      cursor.continue();
-    }
-  };
-
-  document.getElementById("gestor").classList.toggle("hidden");
+// Lógica para la burbuja y los paneles flotantes
+function toggleFloatingMenu() {
+  const menu = document.getElementById('mainFloatingMenuDropdown');
+  menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+  // Oculta los paneles si el menú se cierra
+  if (menu.style.display === 'none') {
+    document.getElementById('rubroMenu').style.display = 'none';
+    document.getElementById('stockMenu').style.display = 'none';
+  }
 }
 
+// Cierra el menú y paneles si se hace clic fuera
+document.addEventListener('click', function(e) {
+  const btn = document.getElementById('mainFloatingMenuBtn');
+  const menu = document.getElementById('mainFloatingMenuDropdown');
+  const rubroPanel = document.getElementById('rubroMenu');
+  const stockPanel = document.getElementById('stockMenu');
+  if (!btn.contains(e.target) && !menu.contains(e.target) && !rubroPanel.contains(e.target) && !stockPanel.contains(e.target)) {
+    menu.style.display = 'none';
+    rubroPanel.style.display = 'none';
+    stockPanel.style.display = 'none';
+  }
+});
 
+// Abre el panel correspondiente y cierra el otro
+function abrirPanel(tipo) {
+  document.getElementById('mainFloatingMenuDropdown').style.display = 'none';
+  if (tipo === 'rubros') {
+    document.getElementById('rubroMenu').style.display = 'block';
+    document.getElementById('stockMenu').style.display = 'none';
+    actualizarSelectoresRubros();
+  } else if (tipo === 'stock') {
+    document.getElementById('stockMenu').style.display = 'block';
+    document.getElementById('rubroMenu').style.display = 'none';
+    actualizarStockRubros();
+  }
+}
+
+function exportarExcel() {
+  // Construir datos para exportar
+  const data = [["Rubro", "Producto", "Stock"]];
+  for (const rubro in productosPorRubro) {
+    productosPorRubro[rubro].forEach(producto => {
+      const key = rubro + '||' + producto;
+      const stock = stockPorProducto[key] !== undefined ? stockPorProducto[key] : 0;
+      data.push([rubro, producto, stock]);
+    });
+  }
+  // Crear hoja y libro
+  const ws = XLSX.utils.aoa_to_sheet(data);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "RubrosProductosStock");
+  // Descargar
+  XLSX.writeFile(wb, "rubros_productos_stock.xlsx");
+}
+
+// Importar desde Excel
+document.getElementById('importarExcelInput').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, {type: 'array'});
+    const sheetName = workbook.SheetNames[0];
+    const sheet = workbook.Sheets[sheetName];
+    const rows = XLSX.utils.sheet_to_json(sheet, {header:1});
+    // Espera encabezados: Rubro, Producto, Stock
+    let count = 0;
+    for (let i = 1; i < rows.length; i++) {
+      const row = rows[i];
+      if (!row[0] || !row[1]) continue;
+      const rubro = row[0].toString().trim();
+      const producto = row[1].toString().trim();
+      const stock = Number(row[2]) || 0;
+      // Añadir rubro si no existe
+      if (!productosPorRubro[rubro]) {
+        productosPorRubro[rubro] = [];
+      }
+      // Añadir producto si no existe
+      if (!productosPorRubro[rubro].includes(producto)) {
+        productosPorRubro[rubro].push(producto);
+      }
+      // Actualizar stock
+      const key = rubro + '||' + producto;
+      stockPorProducto[key] = stock;
+      count++;
+    }
+    // Guardar en localStorage
+    localStorage.setItem('productosPorRubro', JSON.stringify(productosPorRubro));
+    localStorage.setItem('stockPorProducto', JSON.stringify(stockPorProducto));
+    // Actualizar selectores
+    actualizarSelectorPrincipalRubros();
+    actualizarSelectoresRubros();
+    actualizarStockRubros();
+    actualizarProductos();
+    alert('Importación completada. Se añadieron/actualizaron ' + count + ' productos.');
+  };
+  reader.readAsArrayBuffer(file);
+  // Limpiar input para permitir importar el mismo archivo de nuevo si se desea
+  e.target.value = '';
+});
   </script>
 
 </body>
