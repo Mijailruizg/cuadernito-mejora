@@ -267,10 +267,10 @@
 <div class="floating-menu-dropdown" id="mainFloatingMenuDropdown">
   <button onclick="abrirPanel('rubros')">Gestión de Rubros</button>
   <button onclick="abrirPanel('stock')">Editar Stock Rápido</button>
-  <label for="importarExcelInput" style="padding: 12px 24px; color: #00796b; font-size: 17px; cursor:pointer; width:100%; text-align:left;">
+  <button type="button" onclick="document.getElementById('importarExcelInput').click()" style="background:none;border:none;color:#00796b;font-size:17px;padding:12px 24px;width:100%;text-align:left;cursor:pointer;">
     Importar desde Excel
-    <input type="file" id="importarExcelInput" accept=".xlsx,.xls" style="display:none;">
-  </label>
+  </button>
+  <input type="file" id="importarExcelInput" accept=".xlsx,.xls" style="opacity:0;position:absolute;z-index:-1;width:1px;height:1px;">
 </div>
 
 <!-- Panel de Gestión de Rubros -->
@@ -1374,47 +1374,50 @@ function exportarExcel() {
 // Importar desde Excel
 document.getElementById('importarExcelInput').addEventListener('change', function(e) {
   const file = e.target.files[0];
-  if (!file) return;
+  if (!file) {
+    alert('No se seleccionó ningún archivo.');
+    return;
+  }
+  if (!file.name.match(/\.(xlsx|xls)$/i)) {
+    alert('Por favor selecciona un archivo Excel (.xlsx o .xls)');
+    return;
+  }
   const reader = new FileReader();
+  reader.onerror = function() {
+    alert('Error al leer el archivo. Intenta con otro archivo o navegador.');
+  };
   reader.onload = function(e) {
-    const data = new Uint8Array(e.target.result);
-    const workbook = XLSX.read(data, {type: 'array'});
-    const sheetName = workbook.SheetNames[0];
-    const sheet = workbook.Sheets[sheetName];
-    const rows = XLSX.utils.sheet_to_json(sheet, {header:1});
-    // Espera encabezados: Rubro, Producto, Stock
-    let count = 0;
-    for (let i = 1; i < rows.length; i++) {
-      const row = rows[i];
-      if (!row[0] || !row[1]) continue;
-      const rubro = row[0].toString().trim();
-      const producto = row[1].toString().trim();
-      const stock = Number(row[2]) || 0;
-      // Añadir rubro si no existe
-      if (!productosPorRubro[rubro]) {
-        productosPorRubro[rubro] = [];
+    try {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, {type: 'array'});
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const rows = XLSX.utils.sheet_to_json(sheet, {header:1});
+      let count = 0;
+      for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        if (!row[0] || !row[1]) continue;
+        const rubro = row[0].toString().trim();
+        const producto = row[1].toString().trim();
+        const stock = Number(row[2]) || 0;
+        if (!productosPorRubro[rubro]) productosPorRubro[rubro] = [];
+        if (!productosPorRubro[rubro].includes(producto)) productosPorRubro[rubro].push(producto);
+        const key = rubro + '||' + producto;
+        stockPorProducto[key] = stock;
+        count++;
       }
-      // Añadir producto si no existe
-      if (!productosPorRubro[rubro].includes(producto)) {
-        productosPorRubro[rubro].push(producto);
-      }
-      // Actualizar stock
-      const key = rubro + '||' + producto;
-      stockPorProducto[key] = stock;
-      count++;
+      localStorage.setItem('productosPorRubro', JSON.stringify(productosPorRubro));
+      localStorage.setItem('stockPorProducto', JSON.stringify(stockPorProducto));
+      actualizarSelectorPrincipalRubros();
+      actualizarSelectoresRubros();
+      actualizarStockRubros();
+      actualizarProductos();
+      alert('Importación completada. Se añadieron/actualizaron ' + count + ' productos.');
+    } catch (err) {
+      alert('El archivo no es válido o está dañado.');
     }
-    // Guardar en localStorage
-    localStorage.setItem('productosPorRubro', JSON.stringify(productosPorRubro));
-    localStorage.setItem('stockPorProducto', JSON.stringify(stockPorProducto));
-    // Actualizar selectores
-    actualizarSelectorPrincipalRubros();
-    actualizarSelectoresRubros();
-    actualizarStockRubros();
-    actualizarProductos();
-    alert('Importación completada. Se añadieron/actualizaron ' + count + ' productos.');
   };
   reader.readAsArrayBuffer(file);
-  // Limpiar input para permitir importar el mismo archivo de nuevo si se desea
   e.target.value = '';
 });
   </script>
